@@ -1,0 +1,15 @@
+{
+  "name": "bits-wilp-download",
+  "version": "1.0.0",
+  "description": "Script for downloading bits wilp course material",
+  "main": "index.js",
+  "scripts": {
+    "start" : "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cheerio": "1.0.0-rc.12"
+  },
+  "author": "risabhkedia12",
+  "license": "ISC"
+}
