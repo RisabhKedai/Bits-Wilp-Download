@@ -3,8 +3,6 @@ const { getResponse, postResponse } = require("../utils/RequestHandler");
 const loginURL = require("../constants/Urls").BITS_LOGIN_URL
 const userURL = require("../constants/Urls").BITS_COOKIE_COLLECTION
 
-const {cookieJar} = require('../utils/CookieHandler')
-
 const fs = require('fs')
 
 async function login(username, password) {

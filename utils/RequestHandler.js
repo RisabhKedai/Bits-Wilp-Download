@@ -1,8 +1,7 @@
 const axios = require('axios') 
 const {wrapper} = require('axios-cookiejar-support')
 
-const {cookieJar} = require('./CookieHandler')
-const client = wrapper(axios.create({jar : cookieJar}))
+const {getCookieJar, saveCookies} = require('./CookieHandler')
 
 const HEADERS = {
     accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -12,7 +11,11 @@ const HEADERS = {
 
 async function getResponse(url, headers = {}) {
     try {
-        return await client.get(url, {headers : {...HEADERS, ...headers}})
+        const cookieJar = await getCookieJar()
+        const client = wrapper(axios.create({jar : cookieJar}))
+        const resp = await client.get(url, {headers : {...HEADERS, ...headers}})
+        saveCookies(cookieJar)
+        return resp
     }catch (error){
         console.log(error)
         console.log(error.stackTrace);
@@ -21,7 +24,11 @@ async function getResponse(url, headers = {}) {
 
 async function postResponse(url, headers = {}, data= {}){
     try {
-        return await client.post(url, {headers : {...HEADERS, ...headers}, data})
+        const cookieJar = await getCookieJar()
+        const client = wrapper(axios.create({jar : cookieJar}))
+        const resp = await client.post(url, {headers : {...HEADERS, ...headers}, data})
+        saveCookies(cookieJar)
+        return resp
     }catch (error){
         console.log(error)
         console.log(error.stackTrace);
