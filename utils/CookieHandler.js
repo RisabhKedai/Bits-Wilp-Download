@@ -1,9 +1,5 @@
-class CookieHandler {
-    constructor() {
+const tough = require('tough-cookie')
 
-    }
-}
+const cookieJar = new tough.CookieJar() 
 
-const CookieHandlerObj = new CookieHandler();
-
-module.exports = {CookieHandlerObj}
+module.exports = {cookieJar}

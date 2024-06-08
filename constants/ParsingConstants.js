@@ -1,0 +1,1 @@
+// for setting various strings such as  html tag bname and all common to all the pages. 

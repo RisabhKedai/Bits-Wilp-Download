@@ -1,20 +1,24 @@
-const cookieHandler = require("../utils/CookieHandler").CookieHandlerObj
-const { getResponse } = require("../utils/RequestHandler");
+const { getResponse, postResponse } = require("../utils/RequestHandler");
 
-const loginURL = require("../constants/Urls").BITS_PORTAL_LOGIN_URL
+const loginURL = require("../constants/Urls").BITS_LOGIN_URL
+const userURL = require("../constants/Urls").BITS_COOKIE_COLLECTION
 
-const jsessionRegex = require("../constants/RegexConstants").JSESSIONID
+const {cookieJar} = require('../utils/CookieHandler')
 
-function login(username, password) {
-    fetchJSession();
-    console.log(username, password);
+const fs = require('fs')
+
+async function login(username, password) {
+    await getResponse(userURL)
+    const home = await postResponse(loginURL,
+        {
+            "j_username": username,
+            "j_password": password
+        }
+    )
+    if(home.status === 200) {
+        console.log("Logged in Successfully !")
+    } else{
+        console.log("Faield to login")
+    }
 }
-
-async function fetchJSession() {
-    let jsessionData = await getResponse(loginURL)
-    jsessionData = jsessionData.headers.getSetCookie()[0]
-    let jsessionCookie = jsessionRegex.exec(jsessionData)[0]
-    cookieHandler.jsessionCookie = jsessionCookie
-}
-
 module.exports = {login}
