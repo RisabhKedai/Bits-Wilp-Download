@@ -6,7 +6,8 @@ const {getCookiesJson, saveCookiesJson} = require('../utils/CookieHandler')
 async function setCookiesOnPage(page) {
     console .log("Loading old cookies")
     const cookies = await getCookiesJson()
-    for(let cookie of cookies) {
+    if(cookies && cookies.cookies)
+    for(let cookie of cookies.cookies) {
         if(cookie.expires < Date.now) {
             page.setCookie(cookie)
         }
@@ -22,11 +23,12 @@ async function pageInteractionForLogin (page, user, pass) {
     // Click the login button
     console.log("clicked login button")
     await page.click('#submitbtn');
-    await page.waitForNavigation();
+    await page.waitForNavigation({ waitUntil: 'networkidle0' });
+    console.log("Navigated to courses page")
 }
 
 async function saveCookiesFromPage(page) {
-    let cookiesFromPage = await page.cookies()
+    const cookiesFromPage = await page.cookies()
     await saveCookiesJson(cookiesFromPage)
 }
 
