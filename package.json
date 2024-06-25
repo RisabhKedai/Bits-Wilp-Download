@@ -10,11 +10,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "cheerio": "1.0.0-rc.12",
-    "yargs": "^17.7.2",
     "axios": "1.7.2",
+    "axios-cookiejar-support": "^5.0.2",
+    "cheerio": "1.0.0-rc.12",
+    "puppeteer": "^22.11.2",
     "tough-cookie": "4.1.4",
-    "axios-cookiejar-support": "^5.0.2"
+    "yargs": "^17.7.2"
   },
   "author": "risabhkedia12",
   "license": "ISC"
