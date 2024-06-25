@@ -1,16 +1,25 @@
 const puppeteer = require('puppeteer')
+const cheerio = require('cheerio')
 
-const {BITS_SP_LOGIN_URL} = require("../constants/Urls")
+const {BITS_SP_LOGIN_URL, BITS_IDP_LOGIN_URL} = require("../constants/Urls")
 const {getCookiesJson, saveCookiesJson} = require('../utils/CookieHandler')
 
 async function setCookiesOnPage(page) {
-    console .log("Loading old cookies")
-    const cookies = await getCookiesJson()
-    if(cookies && cookies.cookies)
-    for(let cookie of cookies.cookies) {
-        if(cookie.expires < Date.now) {
-            page.setCookie(cookie)
+    console.log("Loading old cookies");
+    try {
+        const cookies = await getCookiesJson(); // Assume this function returns a valid array of cookies
+        if (cookies) {
+            for (let cookie of cookies) {
+                if ((cookie.expires===-1) || (cookie.expires > Date.now())) {
+                    await page.setCookie(cookie);
+                } 
+                // else {
+                //     console.log("Skipping expired cookie:", cookie.name);
+                // }
+            }
         }
+    } catch (error) {
+        console.error("Error setting cookies:", error);
     }
 }
 
@@ -24,12 +33,17 @@ async function pageInteractionForLogin (page, user, pass) {
     console.log("clicked login button")
     await page.click('#submitbtn');
     await page.waitForNavigation({ waitUntil: 'networkidle0' });
-    console.log("Navigated to courses page")
 }
 
 async function saveCookiesFromPage(page) {
     const cookiesFromPage = await page.cookies()
     await saveCookiesJson(cookiesFromPage)
+}
+
+async function checkLoggedIn(page) {
+    const $ = await cheerio.load(await page.content())
+    const myCoursesLink = $('a[href="/user/courses/"]');
+    return (myCoursesLink.length > 0 && myCoursesLink.text().trim() === "My Courses");
 }
 
 async function login(username, password) {
@@ -38,7 +52,13 @@ async function login(username, password) {
     try{
         await setCookiesOnPage(page);
         await page.goto(BITS_SP_LOGIN_URL);
-        await pageInteractionForLogin(page, username, password);
+        if(await page.url() === BITS_IDP_LOGIN_URL)
+            await pageInteractionForLogin(page, username, password);
+        if(!(await checkLoggedIn(page))) {
+            throw new Error("Unable to login into e-learn portal")
+        }else {
+            console.log("Navigated to courses page")
+        }
         await saveCookiesFromPage(page)
     }catch(e) {
         console.log(e, e.stackTrace)
