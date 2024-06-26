@@ -1,7 +1,7 @@
 const axios = require('axios') 
 const {wrapper} = require('axios-cookiejar-support')
 
-const {getCookieJar, saveCookies} = require('./CookieHandler')
+const { saveCookiesFromJar, getCookieJarFromFile } = require('./CookieHandler')
 
 const HEADERS = {
     accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -11,10 +11,11 @@ const HEADERS = {
 
 async function getResponse(url, headers = {}) {
     try {
-        const cookieJar = await getCookieJar()
+        const cookieJar = await getCookieJarFromFile()
+        console.log("cookie jar", cookieJar)
         const client = wrapper(axios.create({jar : cookieJar}))
         const resp = await client.get(url, {headers : {...HEADERS, ...headers}})
-        saveCookies(cookieJar)
+        await saveCookiesFromJar(cookieJar)
         return resp
     }catch (error){
         console.log(error)
@@ -24,7 +25,7 @@ async function getResponse(url, headers = {}) {
 
 async function postResponse(url, headers = {}, data= {}){
     try {
-        const cookieJar = await getCookieJar()
+        const cookieJar = await getCookieJarFromFile()
         const client = wrapper(axios.create({jar : cookieJar}))
         const resp = await client.post(url, {headers : {...HEADERS, ...headers}, data})
         saveCookies(cookieJar)

@@ -27,6 +27,35 @@ yargs.command({
 }) 
 
 yargs.command({
+    command: 'course',
+    describe: 'Manage courses',
+    builder: (yargs) => {
+        // Define the get subcommand
+        yargs.command({
+            command: 'get <course_id>',
+            describe: 'Download a specific course by ID',
+            handler: (argv) => {
+                courseHelper.downloadCourse(argv.course_id);
+            }
+        });
+
+        // Define the list subcommand
+        yargs.command({
+            command: 'list',
+            describe: 'Get a list of courses',
+            handler: () => {
+                courseHelper.listCourses();
+            }
+        });
+    },
+    handler: (argv) => {
+        if (argv._.length === 1) {
+            yargs.showHelp();
+        }
+    }
+})
+
+yargs.command({
     command: 'download <course_code>',
     describe: 'Download the course with the mentioed code id',
     builder: {
