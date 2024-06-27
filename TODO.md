@@ -4,7 +4,7 @@ TODO :
 3. Implement Youtube video downloader from link
 
 INPROGRESS :
-1. Sync cookies accross CookieJar and Puppeteer
 2. Get course list.
 
 DONE :
+1. Sync cookies accross CookieJar and Puppeteer

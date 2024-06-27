@@ -12,7 +12,6 @@ const HEADERS = {
 async function getResponse(url, headers = {}) {
     try {
         const cookieJar = await getCookieJarFromFile()
-        console.log("cookie jar", cookieJar)
         const client = wrapper(axios.create({jar : cookieJar}))
         const resp = await client.get(url, {headers : {...HEADERS, ...headers}})
         await saveCookiesFromJar(cookieJar)
@@ -28,7 +27,7 @@ async function postResponse(url, headers = {}, data= {}){
         const cookieJar = await getCookieJarFromFile()
         const client = wrapper(axios.create({jar : cookieJar}))
         const resp = await client.post(url, {headers : {...HEADERS, ...headers}, data})
-        saveCookies(cookieJar)
+        saveCookiesFromJar(cookieJar)
         return resp
     }catch (error){
         console.log(error)
