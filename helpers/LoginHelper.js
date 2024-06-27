@@ -2,20 +2,16 @@ const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
 
 const {BITS_SP_LOGIN_URL, BITS_IDP_LOGIN_URL} = require("../constants/Urls")
-const { saveCookiesFromPage, getCookiesList } = require('../utils/CookieHandler')
+const { saveCookiesFromPage, getPuppeteerCookies } = require('../utils/CookieHandler')
 
 async function setCookiesOnPage(page) {
     console.log("Loading old cookies");
     try {
-        const cookies = await getCookiesList(); 
+        const cookies = await getPuppeteerCookies(); 
         if (cookies) {
-            for (let cookie of cookies) {
-                if ((cookie.expires===-1) || (cookie.expires > Date.now())) {
-                    await page.setCookie(cookie);
-                } 
-                // else {
-                //     console.log("Skipping expired cookie:", cookie.name);
-                // }
+            const validCookies = cookies.filter(cookie => !cookie.expires || cookie.expires < Date.now());
+            for (let cookie of validCookies) {
+                await page.setCookie(cookie);
             }
         }
     } catch (error) {

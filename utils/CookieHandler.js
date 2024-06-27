@@ -23,11 +23,14 @@ async function getCookieJarFromFile() {
   return jar
 }
 
-async function getCookiesList() {
+async function getPuppeteerCookies() {
   try {
-    const data = await fs.readFile(cookieFileName, 'utf-8');
-    cookies = JSON.parse(data);
-    return cookies
+    const data = JSON.parse(await fs.readFile(cookieFileName, 'utf-8'))
+    let cookieList = []
+    for(cookie of data) {
+      cookieList.push(cookieJarToPuppeteer(cookie))
+    }
+    return cookieList
   } catch (err) {
     return []
   }
@@ -45,11 +48,47 @@ async function saveCookiesFromJar(cookieJar) {
 
 async function saveCookiesFromPage(cookiesJson) {
   try {
-    const data = JSON.stringify(cookiesJson, null, 2);
+    let data  = []
+    for(cookie of cookiesJson) {
+      data.push(puppeteerToCookieJar(cookie))
+    }
+    data = JSON.stringify(data, null, 2);
     await fs.writeFile(cookieFileName, data);
   } catch (err) {
     console.error('Error saving cookies:', err);
   }
 }
 
-module.exports = { saveCookiesFromJar, saveCookiesFromPage, getCookieJarFromFile, getCookiesList };
+function puppeteerToCookieJar(puppeteerCookie) {
+  return {
+    key: puppeteerCookie.name,
+    value: puppeteerCookie.value,
+    expires: puppeteerCookie.expires !== -1 ? new Date(puppeteerCookie.expires * 1000).toISOString() : null,
+    domain: puppeteerCookie.domain,
+    path: puppeteerCookie.path,
+    hostOnly: !puppeteerCookie.domain.startsWith('.'),
+    creation: new Date().toISOString(),
+    lastAccessed: new Date().toISOString()
+  };
+}
+
+function cookieJarToPuppeteer(cookieJarCookie) {
+  return {
+    name: cookieJarCookie.key,
+    value: cookieJarCookie.value,
+    domain: cookieJarCookie.domain,
+    path: cookieJarCookie.path,
+    expires: cookieJarCookie.expires ? new Date(cookieJarCookie.expires).getTime() / 1000 : -1,
+    size: (cookieJarCookie.key + cookieJarCookie.value).length,
+  };
+}
+
+
+module.exports = { 
+  saveCookiesFromJar, 
+  saveCookiesFromPage, 
+  getCookieJarFromFile, 
+  getPuppeteerCookies, 
+  puppeteerToCookieJar, 
+  cookieJarToPuppeteer 
+};
