@@ -30,14 +30,14 @@ yargs.command({
     command: 'course',
     describe: 'Manage courses',
     builder: (yargs) => {
-        // Define the get subcommand
-        yargs.command({
-            command: 'get <course_id>',
-            describe: 'Download a specific course by ID',
-            handler: (argv) => {
-                courseHelper.downloadCourse(argv.course_id);
-            }
-        });
+        // // Define the get subcommand
+        // yargs.command({
+        //     command: 'get <course_id>',
+        //     describe: 'Download a specific course by ID',
+        //     handler: (argv) => {
+        //         courseHelper.downloadCourse(argv.course_id);
+        //     }
+        // });
 
         // Define the list subcommand
         yargs.command({
@@ -45,6 +45,27 @@ yargs.command({
             describe: 'Get a list of courses',
             handler: () => {
                 courseHelper.listCourses();
+            }
+        });
+
+        // Trigger Download for a course
+        yargs.command({
+            command: 'download',
+            describe: 'Select a course from list to download',
+            builder: (yargs) => {
+            yargs.option('--all', {
+                    alias: '-a',
+                    type: 'boolean',
+                    description: 'Download all courses',
+                    default: false
+                });
+            },
+            handler: (argv) => {
+                if(argv.all) {
+                    courseHelper.downloadAllCourses()
+                } else {
+                    courseHelper.downloadSingleCourse();
+                }
             }
         });
     },
