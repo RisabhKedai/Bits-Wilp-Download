@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
 
-const {BITS_SP_LOGIN_URL, BITS_IDP_LOGIN_URL} = require("../constants/Urls")
+const {BITS_SP_LOGIN_URL, BITS_IDP_LOGIN_URL, TAXILA_LOGIN_URL} = require("../constants/Urls")
 const { saveCookiesFromPage, getPuppeteerCookies } = require('../utils/CookieHandler')
 
 async function setCookiesOnPage(page) {
@@ -36,26 +36,35 @@ async function saveCookies(page) {
     await saveCookiesFromPage(cookiesFromPage)
 }
 
-async function checkLoggedIn(page) {
+async function checkBitsLoggedIn(page) {
     const $ = await cheerio.load(await page.content())
     const myCoursesLink = $('a[href="/user/courses/"]');
     return (myCoursesLink.length > 0 && myCoursesLink.text().trim() === "My Courses");
 }
 
+async function checkTaxilaLoggedIn(page) {
+    const regex = /^Welcome back, [a-zA-Z\s]+! 👋$/;
+    const $ = await cheerio.load(await page.content())
+    const welcomeCard = $('h2.mb-3.mt-3');
+    return (welcomeCard.length > 0 && regex.test(welcomeCard.text().trim()));
+}
+
 async function login(username, password) {
-    const browser = await puppeteer.launch({headless : true});
-    const page = await browser.newPage();
+    // {headless : false, devtools: true, defaultNavigationTimeout: 600000}
+    const browser = await puppeteer.launch({headless : false});
+    let page = await browser.newPage();
     try{
         await setCookiesOnPage(page);
-        await page.goto(BITS_SP_LOGIN_URL);
+        await page.goto(TAXILA_LOGIN_URL);
         if(await page.url() === BITS_IDP_LOGIN_URL)
             await pageInteractionForLogin(page, username, password);
-        if(!(await checkLoggedIn(page))) {
+        if(!(await checkTaxilaLoggedIn(page))) {
             throw new Error("Unable to login into e-learn portal")
         }else {
             console.log("Login Successfull")
         }
         await saveCookies(page)
+        
     }catch(e) {
         console.log(e, e.stackTrace)
     } finally {

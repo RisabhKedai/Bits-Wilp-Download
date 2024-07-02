@@ -47,6 +47,8 @@ async function listCourses() {
         for(let i=0; i<courseData.length; i++) {
             console.log((i+1), "-", courseData.at(i).name)
         }
+    }else{ 
+        console.log("No Course found")
     }
 }
 
@@ -76,7 +78,21 @@ async function fetchCoursesList () {
 }
 
 async function downloadCourse(course) {
-    console.log(course)
+    let courseDetails
+    try {
+       let resp = await getResponse(course.url)
+       console.log(resp)
+       if(!resp || resp.status !== 200) {
+        throw new Error("Unable to fetch course details, please try again")
+       } else {
+        courseDetails = resp.body
+        console.log(courseDetails)
+       }
+    } catch (e) {
+        console.log(e)
+    } finally {
+        return courseDetails
+    }
 }
 
 module.exports = {downloadSingleCourse, downloadAllCourses, listCourses}

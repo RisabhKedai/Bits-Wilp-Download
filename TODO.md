@@ -1,14 +1,17 @@
 TODO :
 1. Implement Gemini youtube explainer to explain the youtube video summary
-2. Display course list in colorful manner in the command line
+2. Display All the console outputs with specefic colors
 3. Implement Youtube video downloader from link
 4. Implement download all course command option
 5. Implement repeated asking for course number if input is invalid during dowload.
 6. Provide the user with options with where to save the downloaded files (including drive)
 7. Allow the user to change the download location
+9. Implement Fallback when the session link has expired and need to relogin
 
 INPROGRESS :
-1. Implement Single course parsing and data display
+8. Implement Single course parsing and data display
+11. Implement login into taxila
+10. Append cookie function instead of overwrite cookie
 
 DONE :
 1. Sync cookies accross CookieJar and Puppeteer
