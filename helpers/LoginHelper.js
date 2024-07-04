@@ -43,15 +43,14 @@ async function checkBitsLoggedIn(page) {
 }
 
 async function checkTaxilaLoggedIn(page) {
-    const regex = /^Welcome back, [a-zA-Z\s]+! 👋$/;
     const $ = await cheerio.load(await page.content())
-    const welcomeCard = $('h2.mb-3.mt-3');
-    return (welcomeCard.length > 0 && regex.test(welcomeCard.text().trim()));
+    const logoutLink = $('a.dropdown-item.menu-action[role="menuitem"][data-title="logout,moodle"]');
+    return logoutLink.length > 0
 }
 
 async function login(username, password) {
     // {headless : false, devtools: true, defaultNavigationTimeout: 600000}
-    const browser = await puppeteer.launch({headless : false});
+    const browser = await puppeteer.launch({headless : true});
     let page = await browser.newPage();
     try{
         await setCookiesOnPage(page);
@@ -59,9 +58,19 @@ async function login(username, password) {
         if(await page.url() === BITS_IDP_LOGIN_URL)
             await pageInteractionForLogin(page, username, password);
         if(!(await checkTaxilaLoggedIn(page))) {
-            throw new Error("Unable to login into e-learn portal")
+            throw new Error("Unable to login into taxila portal")
         }else {
-            console.log("Login Successfull")
+            console.log("Login Successfull Taxila")
+        }
+        await saveCookies(page)
+
+        await page.goto(BITS_SP_LOGIN_URL)
+        if(await page.url() === BITS_IDP_LOGIN_URL)
+            await pageInteractionForLogin(page, username, password);
+        if(!(await checkBitsLoggedIn(page))) {
+            throw new Error("Unable to login into elearn portal")
+        }else {
+            console.log("Login Successfull Elearn")
         }
         await saveCookies(page)
         

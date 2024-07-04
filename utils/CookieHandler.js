@@ -102,8 +102,9 @@ function mergeCookies(newList, existingCookies) {
 
 async function getCookieListFromFile() {
   const data = await fs.readFile(cookieFileAddress, 'utf-8');
-  const cookieList = JSON.parse(data);
-  return cookieList
+  if(data) 
+    return JSON.parse(data)
+  return []
 }
 
 module.exports = { 
