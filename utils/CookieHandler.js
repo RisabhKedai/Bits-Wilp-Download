@@ -14,8 +14,7 @@ const cookieJarSpec = {
 async function getCookieJarFromFile() {
   let jar;
   try {
-    const data = await fs.readFile(cookieFileAddress, 'utf-8');
-    const cookieList = JSON.parse(data);
+    const cookieList = await getCookieListFromFile()
     jar = tough.CookieJar.deserializeSync({...cookieJarSpec, cookies: cookieList})
   } catch (err) {
     jar = new tough.CookieJar()
@@ -25,7 +24,7 @@ async function getCookieJarFromFile() {
 
 async function getPuppeteerCookies() {
   try {
-    const data = JSON.parse(await fs.readFile(cookieFileAddress, 'utf-8'))
+    const data = await getCookieListFromFile()
     let cookieList = []
     for(cookie of data) {
       cookieList.push(cookieJarToPuppeteer(cookie))
@@ -39,6 +38,8 @@ async function getPuppeteerCookies() {
 async function saveCookiesFromJar(cookieJar) {
   try {
     const cookies = [...cookieJar.toJSON().cookies];
+    const existingCookies = await getCookieListFromFile();
+    cookies = mergeCookies(cookies, existingCookies)
     const data = JSON.stringify(cookies, null, 2);
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
@@ -52,6 +53,8 @@ async function saveCookiesFromPage(cookiesJson) {
     for(cookie of cookiesJson) {
       data.push(puppeteerToCookieJar(cookie))
     }
+    const existingCookies = await getCookieListFromFile();
+    data = mergeCookies(data, existingCookies)
     data = JSON.stringify(data, null, 2);
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
@@ -83,6 +86,25 @@ function cookieJarToPuppeteer(cookieJarCookie) {
   };
 }
 
+function mergeCookies(newList, existingCookies) {
+  for (let newCookie of newList) {
+    const index = existingCookies.findIndex(
+      (cookie) => newCookie.key === cookie.key && newCookie.domain === cookie.domain
+    );
+    if (index !== -1) {
+      existingCookies[index] = newCookie;
+    } else {
+      existingCookies.push(newCookie);
+    }
+  }
+  return existingCookies;
+}
+
+async function getCookieListFromFile() {
+  const data = await fs.readFile(cookieFileAddress, 'utf-8');
+  const cookieList = JSON.parse(data);
+  return cookieList
+}
 
 module.exports = { 
   saveCookiesFromJar, 
