@@ -3,7 +3,7 @@ const fs = require('fs')
 const rs = require('readline-sync') 
 
 const { getResponse } = require("../utils/RequestHandler");
-const { isNumber } = require("../utils/CommonUtils");
+const { isNumber, removeWhiteSpace, getAddressToStoreCourseData} = require("../utils/CommonUtils");
 
 const coursesUrl = require("../constants/Urls").BITS_COURSES_URL
 const courseFileAddress = './data/courses.json'
@@ -32,7 +32,9 @@ async function downloadAllCourses() {
         console.log("Unable to load courses linked to your account");
         return;
     }
-    console.log(courseList)
+    for(course of courseList) {
+        downloadCourse(course)
+    }
 }
 
 async function listCourses() {
@@ -62,9 +64,12 @@ async function fetchCoursesList () {
             courseElements.each((index, element) => {
                 const courseName = $(element).find('div > div > div > h4').html().trim()
                 const courseUrl = $(element).find('div > div > div > a').attr('href').trim()
+                const url = new URL(courseUrl);
+                const courseId = url.searchParams.get('id');
                 courseData.push({
                     name : courseName,
-                    url : courseUrl
+                    url : courseUrl,
+                    id : courseId
                 })
             });
         }else {
@@ -81,18 +86,64 @@ async function downloadCourse(course) {
     let courseDetails
     try {
        let resp = await getResponse(course.url)
-       console.log(resp)
        if(!resp || resp.status !== 200) {
         throw new Error("Unable to fetch course details, please try again")
        } else {
-        courseDetails = resp.body
-        console.log(courseDetails)
+        courseDetails = await parseCoursePage(resp.data)
+        fs.writeFile(
+            getAddressToStoreCourseData(course.id), 
+            JSON.stringify(courseDetails, null, 2),
+            (err)=>{
+                if(err) {
+                    throw Error('Error while fetching course content. Please try agian')
+                }
+            })
        }
     } catch (e) {
         console.log(e)
     } finally {
         return courseDetails
     }
+}
+
+async function parseCoursePage(coursePage) {
+    const $ = cheerio.load(coursePage);
+    const sectionList = $('ul.topics');
+    const topicList = [];
+
+    sectionList.children('li').each((index, element) => {
+        let sectionData = getSectionData($, $(element))
+        if(sectionData.contentList.length > 0)
+        topicList.push(sectionData);
+    });
+    return topicList;
+}
+
+function getSectionData($, listItem) {
+    const sectionData = {};
+    sectionData.id = listItem.attr('id');
+    
+    const sectionHeader = listItem.find('div.course-section-header > div > h3.sectionname').html();
+    sectionData.sectionHeader = sectionHeader ? sectionHeader.trim() : '';
+
+    const contentList = [];
+    listItem.find('div.content > ul.section').children('li').each((index, element) => {
+        contentList.push(getContentData($, $(element)));
+    });
+    
+    sectionData.contentList = contentList;
+    return sectionData;
+}
+
+function getContentData($, contentItem) {
+    const contentData = {};
+    contentData.id = contentItem.attr('data-id');
+    const contentDetail = $(contentItem).find('div.activity-basis > div > div.activity-instance >div.activitytitle > div.media-body > div.activityname > a')
+    contentData.url = contentDetail.attr('href');
+    contentData.name = removeWhiteSpace(contentDetail.find('.instancename').contents().first().text()).trim();
+    contentData.type = contentDetail.find('.accesshide').text().trim();
+
+    return contentData;
 }
 
 module.exports = {downloadSingleCourse, downloadAllCourses, listCourses}

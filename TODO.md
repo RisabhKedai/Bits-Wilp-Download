@@ -4,13 +4,16 @@ TODO :
 3. Implement Youtube video downloader from link
 4. Implement download all course command option
 5. Implement repeated asking for course number if input is invalid during dowload.
+   (config files in command line. Refernce : git)
 6. Provide the user with options with where to save the downloaded files (including drive)
 7. Allow the user to change the download location
 9. Implement Fallback when the session link has expired and need to relogin
 12. Implement Retry mechanism for login
+13. Seperate parsing for Taxila all courses page to get the id of the courses as well
+14. Get Id for the courses while listing courses
 
 INPROGRESS :
-8. Implement Single course parsing and data display
+15. Download and extract folder content
 
 DONE :
 1. Sync cookies accross CookieJar and Puppeteer
@@ -18,3 +21,4 @@ DONE :
 2. Get course list.
 11. Implement login into taxila
 10. Append cookie function instead of overwrite cookie
+8. Implement Single course parsing and data display

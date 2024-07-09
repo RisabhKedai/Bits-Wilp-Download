@@ -37,7 +37,7 @@ async function getPuppeteerCookies() {
 
 async function saveCookiesFromJar(cookieJar) {
   try {
-    const cookies = [...cookieJar.toJSON().cookies];
+    let cookies = [...cookieJar.toJSON().cookies];
     const existingCookies = await getCookieListFromFile();
     cookies = mergeCookies(cookies, existingCookies)
     const data = JSON.stringify(cookies, null, 2);
