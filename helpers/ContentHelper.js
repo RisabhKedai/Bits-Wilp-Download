@@ -1,6 +1,7 @@
 const util = require('util');
 const fs = require('fs');
-const { createDirectory } = require('../utils/FSHandler');
+const { createDirectory, downloadAndSaveContent } = require('../utils/FSHandler');
+const { FILE_TYPE_FILE } = require('../constants/ParsingConstants');
 
 const readFile = util.promisify(fs.readFile);
 
@@ -15,7 +16,13 @@ async function createDirectories(courseDetails) {
     const coursePath = `./${coursesContentAddress}/${courseDetails.name}`
     createDirectory(coursePath)
     for(let section of courseDetails.sectionList) {
-        createDirectory(`${coursePath}/${section.sectionHeader}`)
+        const sectionPath = `${coursePath}/${section.sectionHeader}`
+        createDirectory(sectionPath)
+        for(let content of section.contentList) {
+            if(content.type === FILE_TYPE_FILE) {
+                downloadAndSaveContent(content.url, sectionPath)
+            }
+        }
     }
 }
 

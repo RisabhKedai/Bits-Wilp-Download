@@ -15,9 +15,11 @@ TODO :
 16. Add option to save stuff to google drive directly
 17. Download ProgressBar
 19. Index comparison Before downloading
+21. Logout and then login for the cookie.
 
 INPROGRESS :
 18. Download A PPT and store
+20. Fix the login cookie error 
 
 DONE :
 1. Sync cookies accross CookieJar and Puppeteer

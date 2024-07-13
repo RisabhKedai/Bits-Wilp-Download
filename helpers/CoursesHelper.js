@@ -9,7 +9,7 @@ const { downloadContent } = require("./ContentHelper");
 const coursesUrl = require("../constants/Urls").BITS_COURSES_URL
 const courseFileAddress = './data/courses.json'
   
-async function downloadSingleCourse(courseCode) {
+async function downloadSingleCourse() {
     let courseList = await fetchCoursesList();
     if (!courseList || !courseList.length) {
         console.log("Unable to load courses linked to your account");
@@ -89,7 +89,7 @@ async function downloadCourse(course) {
     let courseDetails
     try {
        let resp = await getResponse(course.url)
-       if(!resp || resp.status !== 200) {
+       if(!resp || resp.status != 200) {
         throw new Error("Unable to fetch course details, please try again")
        } else {
         courseDetails = await parseCoursePage(resp.data)
@@ -109,6 +109,7 @@ async function downloadCourse(course) {
        }
     } catch (e) {
         console.log(e)
+        throw e
     } finally {
         return courseDetails
     }

@@ -10,10 +10,12 @@ const HEADERS = {
 }
 
 async function getResponse(url, headers = {}) {
+    console.log(url)
     try {
         const cookieJar = await getCookieJarFromFile()
         const client = wrapper(axios.create({jar : cookieJar}))
         const resp = await client.get(url, {headers : {...HEADERS, ...headers}})
+        // console.log(resp)
         await saveCookiesFromJar(cookieJar)
         return resp
     }catch (error){
