@@ -4,6 +4,7 @@ const rs = require('readline-sync')
 
 const { getResponse } = require("../utils/RequestHandler");
 const { isNumber, removeWhiteSpace, getAddressToStoreCourseData} = require("../utils/CommonUtils");
+const { downloadContent } = require("./ContentHelper");
 
 const coursesUrl = require("../constants/Urls").BITS_COURSES_URL
 const courseFileAddress = './data/courses.json'
@@ -21,6 +22,7 @@ async function downloadSingleCourse(courseCode) {
     let courseNumber = rs.questionInt("Enter the number against the course to download: ");
     if (isNumber(courseNumber) && courseNumber >= 1 && courseNumber <= courseList.length) {
         downloadCourse(courseList[courseNumber-1])
+        downloadContent(courseList[courseNumber-1].id)
     } else {
         console.log("Invalid input. Please try again.");
     }
@@ -34,6 +36,7 @@ async function downloadAllCourses() {
     }
     for(course of courseList) {
         downloadCourse(course)
+        downloadContent(course.id)
     }
 }
 
@@ -90,6 +93,10 @@ async function downloadCourse(course) {
         throw new Error("Unable to fetch course details, please try again")
        } else {
         courseDetails = await parseCoursePage(resp.data)
+        courseDetails = {
+            ...course, 
+            sectionList : courseDetails
+        }
         fs.writeFile(
             getAddressToStoreCourseData(course.id), 
             JSON.stringify(courseDetails, null, 2),
@@ -97,7 +104,8 @@ async function downloadCourse(course) {
                 if(err) {
                     throw Error('Error while fetching course content. Please try agian')
                 }
-            })
+            }
+        )
        }
     } catch (e) {
         console.log(e)

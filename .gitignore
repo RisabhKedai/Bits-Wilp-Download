@@ -1,3 +1,4 @@
 # node related
 node_modules
 **/data
+**/content

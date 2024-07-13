@@ -11,9 +11,13 @@ TODO :
 12. Implement Retry mechanism for login
 13. Seperate parsing for Taxila all courses page to get the id of the courses as well
 14. Get Id for the courses while listing courses
+15. Download and extract folder content
+16. Add option to save stuff to google drive directly
+17. Download ProgressBar
+19. Index comparison Before downloading
 
 INPROGRESS :
-15. Download and extract folder content
+18. Download A PPT and store
 
 DONE :
 1. Sync cookies accross CookieJar and Puppeteer
