@@ -1,14 +1,14 @@
 const util = require('util');
-const fs = require('fs');
+const fs = require('fs/promises');
 const { createDirectory, downloadAndSaveContent } = require('../utils/FSHandler');
 const { FILE_TYPE_FILE } = require('../constants/ParsingConstants');
 
-const readFile = util.promisify(fs.readFile);
 
 const coursesContentAddress = './content'
 
 async function downloadContent(courseId) {
-    let courseDetails = JSON.parse(await readFile(`./data/${courseId}.json`, 'utf-8'))
+    const courseString  = await fs.readFile(`./data/${courseId}.json`, 'utf-8')
+    let courseDetails = JSON.parse(courseString)
     await createDirectories(courseDetails)
 }
 

@@ -1,13 +1,12 @@
 const util = require('util');
-const fs = require('fs');
+const fs = require('fs/promises');
 const { HEADER_CONTENT_DISPOSITION } = require('../constants/ParsingConstants');
 const { getResponse } = require('./RequestHandler');
 const { parseContentDisposition } = require('./CommonUtils');
-const readFile = util.promisify(fs.readFile);
 
 async function createDirectory(path) {
     try {
-        await fs.mkdirSync(path)
+        await fs.mkdir(path)
     } catch (e) {
         if (e.code !== 'EEXIST') {
             throw e
@@ -16,7 +15,7 @@ async function createDirectory(path) {
 }
 
 async function downloadAndSaveContent(url, folderPath) {
-    const resp = await getResponse(url)
+    const resp = await getResponse(url, {}, {responseType : "arraybuffer"})
     if (!resp || resp.status != 200 || !resp.headers.hasOwnProperty(HEADER_CONTENT_DISPOSITION)) {
         throw new Error('Unable to Download content from:', url)
     }
@@ -26,15 +25,7 @@ async function downloadAndSaveContent(url, folderPath) {
     }
     const contentName = contentDisposition.filename
     const contentNamePath = `${folderPath}/${contentName}`
-    await fs.writeFile(
-        contentNamePath,
-        resp.data,
-        (err) => {
-            if (err) {
-                throw new Error("Unable to save file", err)
-            }
-        }
-    )
+    await fs.writeFile(contentNamePath, Buffer.from(resp.data), 'binary');
 }
 
 module.exports = { createDirectory, downloadAndSaveContent }

@@ -9,13 +9,11 @@ const HEADERS = {
    'cache-control': 'max-age=0',
 }
 
-async function getResponse(url, headers = {}) {
-    console.log(url)
+async function getResponse(url, headers = {}, options = {}) {
     try {
         const cookieJar = await getCookieJarFromFile()
         const client = wrapper(axios.create({jar : cookieJar}))
-        const resp = await client.get(url, {headers : {...HEADERS, ...headers}})
-        // console.log(resp)
+        const resp = await client.get(url, {...options , headers : {...HEADERS, ...headers}})
         await saveCookiesFromJar(cookieJar)
         return resp
     }catch (error){
