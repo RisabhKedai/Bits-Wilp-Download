@@ -2,7 +2,6 @@ TODO :
 1. Implement Gemini youtube explainer to explain the youtube video summary
 2. Display All the console outputs with specefic colors
 3. Implement Youtube video downloader from link
-4. Implement download all course command option
 5. Implement repeated asking for course number if input is invalid during dowload.
    (config files in command line. Refernce : git)
 6. Provide the user with options with where to save the downloaded files (including drive)
@@ -17,6 +16,7 @@ TODO :
 21. Logout and then login for the cookie.
 20. Fix the login cookie error 
 22. Improve the functionality of downloading and saving folders by entering the folder page
+23. Parse and store the youtube links for the recorded lectures
 
 INPROGRESS :
 
@@ -29,3 +29,4 @@ DONE :
 8. Implement Single course parsing and data display
 18. Download A PPT and store
 15. Download and extract folder content
+4. Implement download all course command option
