@@ -11,15 +11,14 @@ TODO :
 12. Implement Retry mechanism for login
 13. Seperate parsing for Taxila all courses page to get the id of the courses as well
 14. Get Id for the courses while listing courses
-15. Download and extract folder content
 16. Add option to save stuff to google drive directly
 17. Download ProgressBar
 19. Index comparison Before downloading
 21. Logout and then login for the cookie.
+20. Fix the login cookie error 
+22. Improve the functionality of downloading and saving folders by entering the folder page
 
 INPROGRESS :
-18. Download A PPT and store
-20. Fix the login cookie error 
 
 DONE :
 1. Sync cookies accross CookieJar and Puppeteer
@@ -28,3 +27,5 @@ DONE :
 11. Implement login into taxila
 10. Append cookie function instead of overwrite cookie
 8. Implement Single course parsing and data display
+18. Download A PPT and store
+15. Download and extract folder content

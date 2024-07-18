@@ -16,6 +16,7 @@
     "puppeteer": "^22.11.2",
     "readline-sync": "^1.4.10",
     "tough-cookie": "4.1.4",
+    "unzipper": "^0.12.2",
     "yargs": "^17.7.2"
   },
   "author": "risabhkedia12",

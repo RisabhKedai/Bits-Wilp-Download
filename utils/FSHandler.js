@@ -2,7 +2,7 @@ const util = require('util');
 const fs = require('fs/promises');
 const { HEADER_CONTENT_DISPOSITION } = require('../constants/ParsingConstants');
 const { getResponse } = require('./RequestHandler');
-const { parseContentDisposition } = require('./CommonUtils');
+const { parseContentDisposition, getFileExtension, unzipBufferToFolder } = require('./CommonUtils');
 
 async function createDirectory(path) {
     try {
@@ -24,8 +24,15 @@ async function downloadAndSaveContent(url, folderPath) {
         throw new Error('Incorrect data downloaded')
     }
     const contentName = contentDisposition.filename
-    const contentNamePath = `${folderPath}/${contentName}`
-    await fs.writeFile(contentNamePath, Buffer.from(resp.data), 'binary');
+    switch(getFileExtension(contentName)) {
+        case 'zip':
+            unzipBufferToFolder(Buffer.from(resp.data), folderPath)
+            break;
+        default :
+            const contentNamePath = `${folderPath}/${contentName}`
+            await fs.writeFile(contentNamePath, Buffer.from(resp.data), 'binary');
+            break;
+    }
 }
 
 module.exports = { createDirectory, downloadAndSaveContent }
