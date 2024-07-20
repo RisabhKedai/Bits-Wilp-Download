@@ -21,8 +21,8 @@ async function downloadSingleCourse() {
     });
     let courseNumber = rs.questionInt("Enter the number against the course to download: ");
     if (isNumber(courseNumber) && courseNumber >= 1 && courseNumber <= courseList.length) {
-        downloadCourse(courseList[courseNumber-1])
-        downloadContent(courseList[courseNumber-1].id)
+        await downloadCourse(courseList[courseNumber-1])
+        await downloadContent(courseList[courseNumber-1].id)
     } else {
         console.log("Invalid input. Please try again.");
     }
@@ -35,8 +35,8 @@ async function downloadAllCourses() {
         return;
     }
     for(course of courseList) {
-        downloadCourse(course)
-        downloadContent(course.id)
+        await downloadCourse(course)
+        await downloadContent(course.id)
     }
 }
 
