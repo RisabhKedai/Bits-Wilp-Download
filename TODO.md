@@ -2,9 +2,9 @@ TODO :
 1. Implement Gemini youtube explainer to explain the youtube video summary
 2. Display All the console outputs with specefic colors
 3. Implement Youtube video downloader from link
-5. Implement repeated asking for course number if input is invalid during dowload.
-   (config files in command line. Refernce : git)
-6. Provide the user with options with where to save the downloaded files (including drive)
+6. (config files in command line. Refernce : git)
+   Provide the user with options with where to save the downloaded files (including drive) 
+   Use `ini` format for credential storage.
 7. Allow the user to change the download location
 9. Implement Fallback when the session link has expired and need to relogin
 12. Implement Retry mechanism for login
@@ -31,3 +31,4 @@ DONE :
 4. Implement download all course command option
 24. Clean Init script. Delete `data` and `content` folders
 20. Fix the login cookie error 
+5. Implement repeated asking for course number if input is invalid during dowload.

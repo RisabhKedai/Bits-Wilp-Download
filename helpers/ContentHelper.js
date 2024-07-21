@@ -34,6 +34,7 @@ async function createDirectories(courseDetails) {
 }
 
 async function getContentBinary(url) {
+    console.log("URL", url)
     const resp = await getResponse(url, {}, {responseType : "arraybuffer"})
     if (!resp || resp.status != 200 || !resp.headers.hasOwnProperty(HEADER_CONTENT_DISPOSITION)) {
         throw new Error('Unable to Download content from:', url)

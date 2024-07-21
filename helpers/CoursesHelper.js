@@ -1,9 +1,8 @@
 const cheerio = require("cheerio")
 const fs = require('fs').promises
-const rs = require('readline-sync') 
 
 const { getResponse } = require("../utils/RequestHandler");
-const { isNumber, removeWhiteSpace, getAddressToStoreCourseData} = require("../utils/CommonUtils");
+const { removeWhiteSpace, getAddressToStoreCourseData, questionIntInRange} = require("../utils/CommonUtils");
 const { downloadContent } = require("./ContentHelper");
 const { checkDirectory, cleanAndDeleteDir } = require("../utils/FSHandler");
 
@@ -20,18 +19,19 @@ async function downloadSingleCourse() {
     courseList.forEach((course, index) => {
         console.log(`${index + 1} - ${course.name}`);
     });
-    let courseNumber = rs.questionInt("Enter the number against the course to download: ");
-    if (isNumber(courseNumber) && courseNumber >= 1 && courseNumber <= courseList.length) {
-        await downloadCourse(courseList[courseNumber-1])
-        await downloadContent(courseList[courseNumber-1].id)
-    } else {
-        console.log("Invalid input. Please try again.");
-    }
+    let courseNumber = questionIntInRange(
+        "Enter the number against the course to download: ",
+        1, 
+        courseList.length
+    );
+    console.log("course", courseNumber)
+    await downloadCourse(courseList[courseNumber-1])
+    await downloadContent(courseList[courseNumber-1].id)
 }
 
 async function downloadAllCourses() {
     let courseList = await fetchCoursesList();
-    if (!courseList || !courseList.length) {
+    if (!courseList || !courseList.length) { 
         console.log("Unable to load courses linked to your account");
         return;
     }

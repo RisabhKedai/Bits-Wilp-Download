@@ -1,6 +1,7 @@
 
 const fs = require('fs');
 const unzipper = require('unzipper');
+const rs = require('readline-sync') 
 
 function isNumber(value) {
     return !isNaN(value) && typeof value === 'number';
@@ -66,4 +67,25 @@ async function unzipBufferToFolder(buffer, outputFolderPath) {
     }
 }
 
-module.exports = {isNumber, removeWhiteSpace, getAddressToStoreCourseData, parseContentDisposition, getFileExtension, unzipBufferToFolder}
+function validateIntegerInRange(input, min, max) {
+    const integerPattern = /^-?\d+$/;
+    if (!integerPattern.test(input)) {
+        return false;
+    }
+    const number = parseInt(input, 10);
+    return number >= min && number <= max;
+}
+  
+function questionIntInRange(prompt, min, max) {
+    while (true) {
+        const input = rs.question(`${prompt} (${min}-${max}): `);
+        if (validateIntegerInRange(input, min, max)) {
+            return parseInt(input, 10);
+        } else {
+            console.log(`Invalid input. Please enter an integer between ${min} and ${max}.`);
+        }
+    }
+}
+  
+
+module.exports = {isNumber, removeWhiteSpace, getAddressToStoreCourseData, parseContentDisposition, getFileExtension, unzipBufferToFolder, questionIntInRange}
