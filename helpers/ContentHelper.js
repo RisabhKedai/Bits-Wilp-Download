@@ -1,6 +1,6 @@
 const util = require('util');
 const fs = require('fs/promises');
-const { createDirectory, downloadAndSaveContent } = require('../utils/FSHandler');
+const { createDirectory, downloadAndSaveContent, cleanAndDeleteDir } = require('../utils/FSHandler');
 const { FILE_TYPE_FILE, FILE_TYPE_FOLDER, VIEW_ITEM_CODEFILE, DOWNLOAD_FOLDER_CODEFILE } = require('../constants/ParsingConstants');
 
 
@@ -29,4 +29,8 @@ async function createDirectories(courseDetails) {
     }
 }
 
-module.exports = {downloadContent}
+async function clearCourseContent() {
+    await cleanAndDeleteDir('./content')
+}
+
+module.exports = {downloadContent, clearCourseContent}

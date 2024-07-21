@@ -35,4 +35,15 @@ async function downloadAndSaveContent(url, folderPath) {
     }
 }
 
-module.exports = { createDirectory, downloadAndSaveContent }
+async function cleanAndDeleteDir(dir) {
+    if(checkDirectory(dir)) {
+        fs.rm(dir, { recursive: true, force: true }, err => {
+            if (err) {
+              throw err;
+            }
+          });
+    }
+}
+
+
+module.exports = { createDirectory, downloadAndSaveContent, checkDirectory, cleanAndDeleteDir }

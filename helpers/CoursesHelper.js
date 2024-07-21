@@ -5,6 +5,7 @@ const rs = require('readline-sync')
 const { getResponse } = require("../utils/RequestHandler");
 const { isNumber, removeWhiteSpace, getAddressToStoreCourseData} = require("../utils/CommonUtils");
 const { downloadContent } = require("./ContentHelper");
+const { checkDirectory, cleanAndDeleteDir } = require("../utils/FSHandler");
 
 const coursesUrl = require("../constants/Urls").BITS_COURSES_URL
 const courseFileAddress = './data/courses.json'
@@ -115,6 +116,10 @@ async function downloadCourse(course) {
     }
 }
 
+async function clearCourseData() {
+    await cleanAndDeleteDir('./data')
+}
+
 async function parseCoursePage(coursePage) {
     const $ = cheerio.load(coursePage);
     const sectionList = $('ul.topics');
@@ -155,4 +160,4 @@ function getContentData($, contentItem) {
     return contentData;
 }
 
-module.exports = {downloadSingleCourse, downloadAllCourses, listCourses}
+module.exports = {downloadSingleCourse, downloadAllCourses, listCourses, clearCourseData}

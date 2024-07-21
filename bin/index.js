@@ -3,6 +3,7 @@
 const yargs = require("yargs");
 const loginHelper = require("../helpers/LoginHelper")  
 const courseHelper = require("../helpers/CoursesHelper") 
+const contentHelper = require("../helpers/ContentHelper")
 
 yargs.command({ 
     command: 'login  <username> <password>', 
@@ -62,7 +63,7 @@ yargs.command({
             },
             handler: (argv) => {
                 if(argv.all) {
-                    courseHelper.downloadAllCourses()
+                    courseHelper.downloadAllCourses();
                 } else {
                     courseHelper.downloadSingleCourse();
                 }
@@ -76,19 +77,29 @@ yargs.command({
     }
 })
 
+// yargs.command({
+//     command: 'download <course_code>',
+//     describe: 'Download the course with the mentioed code id',
+//     builder: {
+//         course_code : {
+//             describe: 'Course code. Ex:- SESAPZG685',
+//             demandOption: true,
+//             type: 'string',
+//             positional: true
+//         }
+//     },
+//     handler(argv) { 
+//         courseHelper.courseDownload(argv.course_code)
+//     } 
+// })
+
 yargs.command({
-    command: 'download <course_code>',
-    describe: 'Download the course with the mentioed code id',
-    builder: {
-        course_code : {
-            describe: 'Course code. Ex:- SESAPZG685',
-            demandOption: true,
-            type: 'string',
-            positional: true
-        }
-    },
-    handler(argv) { 
-        courseHelper.courseDownload(argv.course_id)
+    command: 'clean',
+    describe: 'Clean all the data created',
+    builder : {},
+    handler : (argv) => { 
+        courseHelper.clearCourseData();
+        contentHelper.clearCourseContent();
     } 
 })
 

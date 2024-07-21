@@ -19,6 +19,7 @@ TODO :
 23. Parse and store the youtube links for the recorded lectures
 
 INPROGRESS :
+24. Clean Init script. Delete `data` and `content` folders
 
 DONE :
 1. Sync cookies accross CookieJar and Puppeteer
