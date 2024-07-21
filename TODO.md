@@ -1,21 +1,27 @@
 TODO :
-1. Implement Gemini youtube explainer to explain the youtube video summary
+BUG:
+
+
+IMPROVEMENT:
+13. Seperate parsing for Taxila all courses page to get the id of the courses as well
 2. Display All the console outputs with specefic colors
+7. Allow the user to change the download location
+9. Implement Fallback when the session link has expired and need to relogin
+14. Get Id for the courses while listing courses
+12. Implement Retry mechanism for login
+19. Index comparison Before downloading
+21. Logout and then login for the cookie.
+22. Improve the functionality of downloading and saving folders by entering the folder page
+
+FEATURE:
+1. Implement Gemini youtube explainer to explain the youtube video summary
+23. Parse and store the youtube links for the recorded lectures
+17. Download ProgressBar
 3. Implement Youtube video downloader from link
 6. (config files in command line. Refernce : git)
    Provide the user with options with where to save the downloaded files (including drive) 
    Use `ini` format for credential storage.
-7. Allow the user to change the download location
-9. Implement Fallback when the session link has expired and need to relogin
-12. Implement Retry mechanism for login
-13. Seperate parsing for Taxila all courses page to get the id of the courses as well
-14. Get Id for the courses while listing courses
 16. Add option to save stuff to google drive directly
-17. Download ProgressBar
-19. Index comparison Before downloading
-21. Logout and then login for the cookie.
-22. Improve the functionality of downloading and saving folders by entering the folder page
-23. Parse and store the youtube links for the recorded lectures
 
 INPROGRESS :
 
