@@ -1,5 +1,5 @@
 const cheerio = require("cheerio")
-const fs = require('fs')
+const fs = require('fs').promises
 const rs = require('readline-sync') 
 
 const { getResponse } = require("../utils/RequestHandler");
@@ -43,11 +43,7 @@ async function downloadAllCourses() {
 
 async function listCourses() {
     let courseData = await fetchCoursesList()
-    await fs.writeFile(courseFileAddress, JSON.stringify(courseData, null, 2), (err)=>{
-        if(err){
-            console.log("List Courses save failed")
-        }
-    });
+    await fs.writeFile(courseFileAddress, JSON.stringify(courseData, null, 2));
     if(courseData && courseData.length>=1) {
         console.log("Course List : ")
         for(let i=0; i<courseData.length; i++) {
@@ -98,7 +94,7 @@ async function downloadCourse(course) {
             ...course, 
             sectionList : courseDetails
         }
-        fs.writeFile(
+        await fs.writeFile(
             getAddressToStoreCourseData(course.id), 
             JSON.stringify(courseDetails, null, 2),
             (err)=>{
