@@ -1,12 +1,10 @@
 const util = require('util');
 const fs = require('fs/promises');
-const { HEADER_CONTENT_DISPOSITION } = require('../constants/ParsingConstants');
-const { getResponse } = require('./RequestHandler');
 const { parseContentDisposition, getFileExtension, unzipBufferToFolder } = require('./CommonUtils');
 
 async function createDirectory(path) {
     try {
-        await fs.mkdir(path)
+        await fs.mkdir(path, {recursive : true})
     } catch (e) {
         if (e.code !== 'EEXIST') {
             throw e
@@ -30,23 +28,14 @@ async function checkDirectory(path) {
     }
 }
 
-async function downloadAndSaveContent(url, folderPath) {
-    const resp = await getResponse(url, {}, {responseType : "arraybuffer"})
-    if (!resp || resp.status != 200 || !resp.headers.hasOwnProperty(HEADER_CONTENT_DISPOSITION)) {
-        throw new Error('Unable to Download content from:', url)
-    }
-    const contentDisposition = parseContentDisposition(resp.headers[HEADER_CONTENT_DISPOSITION])
-    if (!contentDisposition.hasOwnProperty('filename')) {
-        throw new Error('Incorrect data downloaded')
-    }
-    const contentName = contentDisposition.filename
+async function saveContent(folderPath, contentName, contentBiary) {
     switch(getFileExtension(contentName)) {
         case 'zip':
-            unzipBufferToFolder(Buffer.from(resp.data), folderPath)
+            unzipBufferToFolder(Buffer.from(contentBiary), folderPath)
             break;
         default :
             const contentNamePath = `${folderPath}/${contentName}`
-            await fs.writeFile(contentNamePath, Buffer.from(resp.data), 'binary');
+            await fs.writeFile(contentNamePath, Buffer.from(contentBiary), 'binary');
             break;
     }
 }
@@ -61,4 +50,4 @@ async function cleanAndDeleteDir(dir) {
     }
 }
 
-module.exports = { createDirectory, downloadAndSaveContent, checkDirectory, cleanAndDeleteDir }
+module.exports = { createDirectory, saveContent, checkDirectory, cleanAndDeleteDir }
