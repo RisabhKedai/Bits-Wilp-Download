@@ -61,5 +61,4 @@ async function cleanAndDeleteDir(dir) {
     }
 }
 
-
 module.exports = { createDirectory, downloadAndSaveContent, checkDirectory, cleanAndDeleteDir }
