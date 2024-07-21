@@ -14,6 +14,22 @@ async function createDirectory(path) {
     }
 }
 
+async function checkDirectory(path) {
+    try {
+        const stats = await fs.stat(path);
+        if (stats.isDirectory()) {
+            return true;
+    }
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            return false;
+        } else {
+            console.error('Error checking directory:', err);
+            throw err
+        }
+    }
+}
+
 async function downloadAndSaveContent(url, folderPath) {
     const resp = await getResponse(url, {}, {responseType : "arraybuffer"})
     if (!resp || resp.status != 200 || !resp.headers.hasOwnProperty(HEADER_CONTENT_DISPOSITION)) {

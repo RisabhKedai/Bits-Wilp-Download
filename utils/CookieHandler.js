@@ -1,4 +1,5 @@
 const tough = require('tough-cookie');
+const { checkDirectory } = require('./FSHandler');
 const fs = require('fs').promises;
 
 const cookieFileAddress = './data/cookies.json';
@@ -41,6 +42,9 @@ async function saveCookiesFromJar(cookieJar) {
     const existingCookies = await getCookieListFromFile();
     cookies = mergeCookies(cookies, existingCookies)
     const data = JSON.stringify(cookies, null, 2);
+    if(!(await checkDirectory('./data'))) {
+      await fs.mkdir('./data')
+    }
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
     console.error('Error saving cookies:', err);
@@ -56,6 +60,9 @@ async function saveCookiesFromPage(cookiesJson) {
     const existingCookies = await getCookieListFromFile();
     data = mergeCookies(data, existingCookies)
     data = JSON.stringify(data, null, 2);
+    if(!(await checkDirectory('./data'))) {
+      await fs.mkdir('./data')
+    }
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
     console.error('Error saving cookies:', err);
@@ -101,9 +108,11 @@ function mergeCookies(newList, existingCookies) {
 }
 
 async function getCookieListFromFile() {
-  const data = await fs.readFile(cookieFileAddress, 'utf-8');
-  if(data) 
-    return JSON.parse(data)
+  if(await checkDirectory('./data')) {
+    const data = await fs.readFile(cookieFileAddress, 'utf-8');
+    if(data) 
+      return JSON.parse(data)
+  }
   return []
 }
 
