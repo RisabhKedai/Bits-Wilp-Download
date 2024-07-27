@@ -1,4 +1,4 @@
-const util = require('util');
+const cheerio = require('cheerio');
 const fs = require('fs/promises');
 const { createDirectory, saveContent, cleanAndDeleteDir } = require('../utils/FSHandler');
 const { getResponse } = require('../utils/RequestHandler');
@@ -37,16 +37,12 @@ async function createDirectories(courseDetails) {
 }
 
 async function getContentBinary(url) {
-    console.log("URL", url)
+    // console.log("URL", url)
     const resp = await getResponse(url, {}, { responseType: "arraybuffer" })
-    if (!resp || resp.status != 200 || !resp.headers.hasOwnProperty(HEADER_CONTENT_DISPOSITION)) {
+    if (!resp || resp.status != 200) {
         throw new Error('Unable to Download content from:', url)
     }
-    const contentDisposition = parseContentDisposition(resp.headers[HEADER_CONTENT_DISPOSITION])
-    if (!contentDisposition.hasOwnProperty('filename')) {
-        throw new Error('Incorrect data downloaded')
-    }
-    const contentName = contentDisposition.filename
+    const contentName = getFileName(resp.headers) || getFileNameFromURL(resp.request._header)
     return { contentName, contentBinary: resp.data }
 }
 
@@ -56,17 +52,63 @@ async function getPageDetails(pageUrl) {
         if (!resp || resp.status !== 200) {
             throw new Error("Unable to fetch Page details")
         }
-        const pageContentList = await parsePageContent(resp.body)
+        const pageContentList = await parsePageContent(resp.data)
         return pageContentList
     } catch (e) {
         console.log(e)
         console.log(e.stackTrace)
-    } 
+    }
 }
 
-async function parsePageContent(contentStr) {
-    const $ = cheerio.load(contentStr)
 
+
+async function parsePageContent(contentStr) {
+    const $ = cheerio.load(contentStr);
+    const titles = [];
+    const links = []
+    const titleParas = $('div.no-overflow').children()
+    titleParas.each((_, el) => {
+        const para = el.children;
+        for (let child of para) {
+            if (child.tagName === 'b') {
+                titles.push($(child).text());
+            }
+        }
+    })
+    const mediaDivs = $('div.mediaplugin>div>video>a');
+    mediaDivs.each((_, el) => {
+        const videoAttr = $(el).attr('href')
+        if (videoAttr) {
+            links.push(videoAttr);
+        }
+    });
+    const mergedList = titles.map((title, index) => ({
+        title,
+        link: links[index]
+    }));
+    console.log(mergedList)
+    return mergedList
+}
+
+
+// TODO : figure out a way to find the content type. 
+function getFileName(headers) {
+    let contentName
+    if (headers.hasOwnProperty(HEADER_CONTENT_DISPOSITION)) {
+        const contentDisposition = parseContentDisposition(resp.headers[HEADER_CONTENT_DISPOSITION])
+        if (!contentDisposition.hasOwnProperty('filename')) {
+            throw new Error('Incorrect data downloaded')
+        }
+        contentName = contentDisposition.filename
+    }
+    return contentName
+}
+
+function getFileNameFromURL(headers) {
+    const urlPart = headers.split(' ')[1];
+    const path = urlPart.split('?')[0];
+    const fileName = path.split('/').pop();
+    return decodeURIComponent(fileName);
 }
 
 async function clearCourseContent() {
