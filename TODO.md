@@ -12,18 +12,20 @@ IMPROVEMENT:
 19. Index comparison Before downloading
 21. Logout and then login for the cookie.
 22. Improve the functionality of downloading and saving folders by entering the folder page
+26. Use service.php to get accurate data.
 
 FEATURE:
 1. Implement Gemini youtube explainer to explain the youtube video summary
 23. Parse and store the youtube links for the recorded lectures
 17. Download ProgressBar
-3. Implement Youtube video downloader from link
+25. Download video from the content
 6. (config files in command line. Refernce : git)
    Provide the user with options with where to save the downloaded files (including drive) 
    Use `ini` format for credential storage.
 16. Add option to save stuff to google drive directly
 
 INPROGRESS :
+3. Parse YouTube link and title and store in content
 
 DONE :
 1. Sync cookies accross CookieJar and Puppeteer
