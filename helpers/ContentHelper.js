@@ -60,34 +60,17 @@ async function getPageDetails(pageUrl) {
     }
 }
 
-
-
 async function parsePageContent(contentStr) {
-    const $ = cheerio.load(contentStr);
-    const titles = [];
     const links = []
-    const titleParas = $('div.no-overflow').children()
-    titleParas.each((_, el) => {
-        const para = el.children;
-        for (let child of para) {
-            if (child.tagName === 'b') {
-                titles.push($(child).text());
-            }
-        }
-    })
-    const mediaDivs = $('div.mediaplugin>div>video>a');
+    const $ = cheerio.load(contentStr);
+    const mediaDivs = $('a.mediafallbacklink');
     mediaDivs.each((_, el) => {
         const videoAttr = $(el).attr('href')
         if (videoAttr) {
             links.push(videoAttr);
         }
     });
-    const mergedList = titles.map((title, index) => ({
-        title,
-        link: links[index]
-    }));
-    console.log(mergedList)
-    return mergedList
+    return links
 }
 
 
