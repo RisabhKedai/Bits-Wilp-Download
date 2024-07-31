@@ -1,10 +1,10 @@
-To start the project : 
+To start the project :
 
 ```
 npm install -g .
 ```
 
-Then to run the cli tool run 
+Then to run the cli tool run
 
 ```
 wilp-dwnld --help

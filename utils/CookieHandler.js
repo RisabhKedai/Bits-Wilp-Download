@@ -1,38 +1,41 @@
-const tough = require('tough-cookie');
-const { checkDirectory } = require('./FSHandler');
-const fs = require('fs').promises;
+const tough = require("tough-cookie");
+const { checkDirectory } = require("./FSHandler");
+const fs = require("fs").promises;
 
-const cookieFileAddress = './data/cookies.json';
+const cookieFileAddress = "./data/cookies.json";
 const cookieJarSpec = {
-    "version": "tough-cookie@4.1.4",
-    "storeType": "MemoryCookieStore",
-    "rejectPublicSuffixes": true,
-    "enableLooseMode": false,
-    "allowSpecialUseDomain": true,
-    "prefixSecurity": "silent"
-}
+  version: "tough-cookie@4.1.4",
+  storeType: "MemoryCookieStore",
+  rejectPublicSuffixes: true,
+  enableLooseMode: false,
+  allowSpecialUseDomain: true,
+  prefixSecurity: "silent",
+};
 
 async function getCookieJarFromFile() {
   let jar;
   try {
-    const cookieList = await getCookieListFromFile()
-    jar = tough.CookieJar.deserializeSync({...cookieJarSpec, cookies: cookieList})
+    const cookieList = await getCookieListFromFile();
+    jar = tough.CookieJar.deserializeSync({
+      ...cookieJarSpec,
+      cookies: cookieList,
+    });
   } catch (err) {
-    jar = new tough.CookieJar()
+    jar = new tough.CookieJar();
   }
-  return jar
+  return jar;
 }
 
 async function getPuppeteerCookies() {
   try {
-    const data = await getCookieListFromFile()
-    let cookieList = []
-    for(cookie of data) {
-      cookieList.push(cookieJarToPuppeteer(cookie))
+    const data = await getCookieListFromFile();
+    let cookieList = [];
+    for (cookie of data) {
+      cookieList.push(cookieJarToPuppeteer(cookie));
     }
-    return cookieList
+    return cookieList;
   } catch (err) {
-    return []
+    return [];
   }
 }
 
@@ -40,32 +43,32 @@ async function saveCookiesFromJar(cookieJar) {
   try {
     let cookies = [...cookieJar.toJSON().cookies];
     const existingCookies = await getCookieListFromFile();
-    cookies = mergeCookies(cookies, existingCookies)
+    cookies = mergeCookies(cookies, existingCookies);
     const data = JSON.stringify(cookies, null, 2);
-    if(!(await checkDirectory('./data'))) {
-      await fs.mkdir('./data')
+    if (!(await checkDirectory("./data"))) {
+      await fs.mkdir("./data");
     }
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
-    console.error('Error saving cookies:', err);
+    console.error("Error saving cookies:", err);
   }
 }
 
 async function saveCookiesFromPage(cookiesJson) {
   try {
-    let data  = []
-    for(cookie of cookiesJson) {
-      data.push(puppeteerToCookieJar(cookie))
+    let data = [];
+    for (cookie of cookiesJson) {
+      data.push(puppeteerToCookieJar(cookie));
     }
     const existingCookies = await getCookieListFromFile();
-    data = mergeCookies(data, existingCookies)
+    data = mergeCookies(data, existingCookies);
     data = JSON.stringify(data, null, 2);
-    if(!(await checkDirectory('./data'))) {
-      await fs.mkdir('./data')
+    if (!(await checkDirectory("./data"))) {
+      await fs.mkdir("./data");
     }
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
-    console.error('Error saving cookies:', err);
+    console.error("Error saving cookies:", err);
   }
 }
 
@@ -73,12 +76,15 @@ function puppeteerToCookieJar(puppeteerCookie) {
   return {
     key: puppeteerCookie.name,
     value: puppeteerCookie.value,
-    expires: puppeteerCookie.expires !== -1 ? new Date(puppeteerCookie.expires * 1000).toISOString() : undefined,
+    expires:
+      puppeteerCookie.expires !== -1
+        ? new Date(puppeteerCookie.expires * 1000).toISOString()
+        : undefined,
     domain: puppeteerCookie.domain,
     path: puppeteerCookie.path,
-    hostOnly: !puppeteerCookie.domain.startsWith('.'),
+    hostOnly: !puppeteerCookie.domain.startsWith("."),
     creation: new Date().toISOString(),
-    lastAccessed: new Date().toISOString()
+    lastAccessed: new Date().toISOString(),
   };
 }
 
@@ -88,7 +94,9 @@ function cookieJarToPuppeteer(cookieJarCookie) {
     value: cookieJarCookie.value,
     domain: cookieJarCookie.domain,
     path: cookieJarCookie.path,
-    expires: cookieJarCookie.expires ? new Date(cookieJarCookie.expires).getTime() / 1000 : -1,
+    expires: cookieJarCookie.expires
+      ? new Date(cookieJarCookie.expires).getTime() / 1000
+      : -1,
     size: (cookieJarCookie.key + cookieJarCookie.value).length,
   };
 }
@@ -96,7 +104,8 @@ function cookieJarToPuppeteer(cookieJarCookie) {
 function mergeCookies(newList, existingCookies) {
   for (let newCookie of newList) {
     const index = existingCookies.findIndex(
-      (cookie) => newCookie.key === cookie.key && newCookie.domain === cookie.domain
+      (cookie) =>
+        newCookie.key === cookie.key && newCookie.domain === cookie.domain,
     );
     if (index !== -1) {
       existingCookies[index] = newCookie;
@@ -108,19 +117,18 @@ function mergeCookies(newList, existingCookies) {
 }
 
 async function getCookieListFromFile() {
-  if(await checkDirectory('./data')) {
-    const data = await fs.readFile(cookieFileAddress, 'utf-8');
-    if(data) 
-      return JSON.parse(data)
+  if (await checkDirectory("./data")) {
+    const data = await fs.readFile(cookieFileAddress, "utf-8");
+    if (data) return JSON.parse(data);
   }
-  return []
+  return [];
 }
 
-module.exports = { 
-  saveCookiesFromJar, 
-  saveCookiesFromPage, 
-  getCookieJarFromFile, 
-  getPuppeteerCookies, 
-  puppeteerToCookieJar, 
-  cookieJarToPuppeteer 
+module.exports = {
+  saveCookiesFromJar,
+  saveCookiesFromPage,
+  getCookieJarFromFile,
+  getPuppeteerCookies,
+  puppeteerToCookieJar,
+  cookieJarToPuppeteer,
 };
