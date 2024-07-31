@@ -59,7 +59,7 @@ async function unzipBufferToFolder(buffer, outputFolderPath) {
     const stream = unzipper.Open.buffer(buffer);
     const directory = await stream;
     await directory.extract({ path: outputFolderPath });
-    console.log(`Files extracted to ${outputFolderPath}`);
+    // console.log(`Files extracted to ${outputFolderPath}`);
   } catch (err) {
     console.error(`Error unzipping buffer: ${err.message}`);
     // throw err

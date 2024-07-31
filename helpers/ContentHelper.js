@@ -24,7 +24,7 @@ async function downloadContent(courseId) {
   await createDirectories(courseDetails);
   fs.writeFile(
     `./data/${courseId}.json`,
-    JSON.stringify(courseDetails, null, 2),
+    JSON.stringify(courseDetails, null, 2)
   );
 }
 
@@ -38,33 +38,38 @@ async function createDirectories(courseDetails) {
       if (content.type === FILE_TYPE_FILE) {
         let { contentName, contentBinary } = await getContentBinary(
           content.url,
-          content.type,
+          content.type
         );
-        await saveContent(sectionPath, contentName, contentBinary);
+        if (contentName && contentBinary) {
+          await saveContent(sectionPath, contentName, contentBinary);
+        }
       } else if (content.type === FILE_TYPE_FOLDER) {
         const downloadURL = content.url.replace(
           VIEW_ITEM_CODEFILE,
-          DOWNLOAD_FOLDER_CODEFILE,
+          DOWNLOAD_FOLDER_CODEFILE
         );
         let { contentName, contentBinary } = await getContentBinary(
           downloadURL,
-          content.type,
+          content.type
         );
-        await saveContent(sectionPath, contentName, contentBinary);
+        if (contentName && contentBinary) {
+          await saveContent(sectionPath, contentName, contentBinary);
+        }
       } else if (content.type === FILE_TYPE_PAGE) {
-        content.pageDetails = await getPageDetails(content.url);
+        content.pageDetails = (await getPageDetails(content.url)) || [];
       }
     }
   }
 }
 
 async function getContentBinary(url, type) {
-  console.log("URL", url, "Type", type);
+  //   console.log("URL", url, "Type", type);
   const resp = await getResponse(url, {}, { responseType: "arraybuffer" });
   if (!resp || resp.status != 200) {
     // throw new Error('Unable to Download content from:', url)
+    // console.log(resp.status);
     console.log("Unable to download content from URL", url);
-    // console.log(resp.status)
+    return {};
   }
   const contentName =
     getFileName(resp.headers) || getFileNameFromURL(resp.request._header);
@@ -76,14 +81,15 @@ async function getPageDetails(pageUrl) {
     const resp = await getResponse(pageUrl);
     if (!resp || resp.status !== 200) {
       // throw new Error("Unable to fetch Page details")
-      console.log("Unable to fetch Page details", url);
       // console.log(resp.status)
+      console.log("Unable to fetch Page details", url);
+      return [];
     }
     const pageContentList = await parsePageContent(resp.data);
     return pageContentList;
   } catch (e) {
-    console.log(e);
-    console.log(e.stackTrace);
+    // console.log(e);
+    // console.log(e.stackTrace);
   }
 }
 
@@ -105,13 +111,12 @@ function getFileName(headers) {
   let contentName;
   if (headers.hasOwnProperty(HEADER_CONTENT_DISPOSITION)) {
     const contentDisposition = parseContentDisposition(
-      headers[HEADER_CONTENT_DISPOSITION],
+      headers[HEADER_CONTENT_DISPOSITION]
     );
     if (!contentDisposition.hasOwnProperty("filename")) {
       // throw new Error('Incorrect  downloaded')
       console.log("File format inappropriate");
     }
-    data;
     contentName = contentDisposition.filename;
   }
   return contentName;

@@ -21,8 +21,8 @@ async function getResponse(url, headers = {}, options = {}) {
     await saveCookiesFromJar(cookieJar);
     return resp;
   } catch (error) {
-    console.log(error);
-    console.log(error.stackTrace);
+    // console.log(error);
+    // console.log(error.stackTrace);
   }
 }
 
@@ -37,8 +37,8 @@ async function postResponse(url, headers = {}, data = {}) {
     saveCookiesFromJar(cookieJar);
     return resp;
   } catch (error) {
-    console.log(error);
-    console.log(error.stackTrace);
+    // console.log(error);
+    // console.log(error.stackTrace);
   }
 }
 
