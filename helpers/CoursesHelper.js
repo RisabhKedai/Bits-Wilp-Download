@@ -26,11 +26,11 @@ async function downloadSingleCourse() {
   let courseNumber = questionIntInRange(
     "Enter the number against the course to download: ",
     1,
-    courseList.length,
+    courseList.length
   );
-//   console.log("course", courseNumber);
+  //   console.log("course", courseNumber);
   await downloadCourse(courseList[courseNumber - 1]);
-  await downloadContent(courseList[courseNumber - 1].id);
+  await downloadContent(courseList[courseNumber - 1].id, courseNumber);
 }
 
 async function downloadAllCourses() {
@@ -39,11 +39,11 @@ async function downloadAllCourses() {
     console.log("Unable to load courses linked to your account");
     return;
   }
-  for (course of courseList) {
+  courseList.forEach(async (course, idx) => {
     await downloadCourse(course);
-    await downloadContent(course.id);
-    console.log("Finished downloading course --", course.name)
-  }
+    await downloadContent(course.id, idx);
+    console.log("Finished downloading course --", course.name);
+  });
 }
 
 async function listCourses() {
@@ -111,10 +111,10 @@ async function downloadCourse(course) {
         (err) => {
           if (err) {
             throw Error(
-              "Error while fetching course content. Please try agian",
+              "Error while fetching course content. Please try agian"
             );
           }
-        },
+        }
       );
     }
   } catch (e) {
@@ -166,11 +166,11 @@ function getContentData($, contentItem) {
   const contentData = {};
   contentData.id = contentItem.attr("data-id");
   const contentDetail = $(contentItem).find(
-    "div.activity-basis > div > div.activity-instance >div.activitytitle > div.media-body > div.activityname > a",
+    "div.activity-basis > div > div.activity-instance >div.activitytitle > div.media-body > div.activityname > a"
   );
   contentData.url = contentDetail.attr("href");
   contentData.name = removeWhiteSpace(
-    contentDetail.find(".instancename").contents().first().text(),
+    contentDetail.find(".instancename").contents().first().text()
   ).trim();
   contentData.type = contentDetail.find(".accesshide").text().trim();
 

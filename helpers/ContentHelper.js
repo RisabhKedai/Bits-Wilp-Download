@@ -18,29 +18,30 @@ const { parseContentDisposition } = require("../utils/CommonUtils");
 
 const coursesContentAddress = "./content";
 
-async function downloadContent(courseId) {
+async function downloadContent(courseId, idx) {
   const courseString = await fs.readFile(`./data/${courseId}.json`, "utf-8");
   let courseDetails = JSON.parse(courseString);
-  await createDirectories(courseDetails);
+  await createDirectories(courseDetails, idx);
   fs.writeFile(
     `./data/${courseId}.json`,
     JSON.stringify(courseDetails, null, 2)
   );
 }
 
-async function createDirectories(courseDetails) {
-  const coursePath = `./${coursesContentAddress}/${courseDetails.name}`;
+async function createDirectories(courseDetails, cidx) {
+  const coursePath = `./${coursesContentAddress}/C${cidx}-${courseDetails.name}`;
   await createDirectory(coursePath);
-  for (let section of courseDetails.sectionList) {
-    const sectionPath = `${coursePath}/${section.sectionHeader}`;
+  courseDetails.sectionList.forEach(async (section, sidx) => {
+    const sectionPath = `${coursePath}/C${cidx}S${sidx}-${section.sectionHeader}`;
     await createDirectory(sectionPath);
-    for (let content of section.contentList) {
+    section.contentList.forEach(async (content, didx) => {
       if (content.type === FILE_TYPE_FILE) {
         let { contentName, contentBinary } = await getContentBinary(
           content.url,
           content.type
         );
         if (contentName && contentBinary) {
+          contentName = `C${cidx}S${sidx}D${didx}-${contentName}`
           await saveContent(sectionPath, contentName, contentBinary);
         }
       } else if (content.type === FILE_TYPE_FOLDER) {
@@ -53,13 +54,14 @@ async function createDirectories(courseDetails) {
           content.type
         );
         if (contentName && contentBinary) {
+          contentName = `C${cidx}S${sidx}D${didx}-${contentName}`
           await saveContent(sectionPath, contentName, contentBinary);
         }
       } else if (content.type === FILE_TYPE_PAGE) {
         content.pageDetails = (await getPageDetails(content.url)) || [];
       }
-    }
-  }
+    });
+  });
 }
 
 async function getContentBinary(url, type) {

@@ -31,9 +31,7 @@ FEATURE:
 7. Merge PPTs so that they can be printed in a more convenient way.
 ```
 
-INPROGRESS : 
-29. Naming of the files and folders so that they are in sequential order.
-
+INPROGRESS :
 
 DONE :
 
@@ -50,3 +48,4 @@ DONE :
 1. Fix the login cookie error
 1. Implement repeated asking for course number if input is invalid during dowload.
 1. Parse YouTube link and title and store in content
+1. Naming of the files and folders so that they are in sequential order.[28]
