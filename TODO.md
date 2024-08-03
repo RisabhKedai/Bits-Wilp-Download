@@ -31,7 +31,9 @@ FEATURE:
 7. Merge PPTs so that they can be printed in a more convenient way.
 ```
 
-INPROGRESS :
+INPROGRESS : 
+29. Naming of the files and folders so that they are in sequential order.
+
 
 DONE :
 
