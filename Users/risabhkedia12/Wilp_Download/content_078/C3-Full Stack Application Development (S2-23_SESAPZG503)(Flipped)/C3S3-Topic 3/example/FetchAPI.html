@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="ajaxButton" type="button">Make a request</button>
+    <h1 id="hlid"></h1>
+
+    <script>
+        (function() {
+
+            var httpRequest;
+
+            document.getElementById("ajaxButton").addEventListener('click', makeRequest);
+
+            function makeRequest() {
+                fetch("https://www.boredapi.com/api/activity")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(JSON.stringify(data));
+                        document.getElementById("hlid").innerText = data.activity;
+                    })
+                    .catch(error => {
+					  console.error(error)
+					  alert("There is a problem with the request")
+					  }
+                      );
+            }
+        })();
+    </script>
+</body>
+
+</html>

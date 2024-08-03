@@ -1,8 +1,10 @@
 const tough = require("tough-cookie");
 const { checkDirectory } = require("./FSHandler");
+const { DATA_FOLDER } = require("../constants/Path");
 const fs = require("fs").promises;
 
-const cookieFileAddress = "./data/cookies.json";
+const cookieFileAddress = `./${DATA_FOLDER}/cookies.json`;
+const dataFolderAddress = `./${DATA_FOLDER}`;
 const cookieJarSpec = {
   version: "tough-cookie@4.1.4",
   storeType: "MemoryCookieStore",
@@ -45,8 +47,8 @@ async function saveCookiesFromJar(cookieJar) {
     const existingCookies = await getCookieListFromFile();
     cookies = mergeCookies(cookies, existingCookies);
     const data = JSON.stringify(cookies, null, 2);
-    if (!(await checkDirectory("./data"))) {
-      await fs.mkdir("./data");
+    if (!(await checkDirectory(dataFolderAddress))) {
+      await fs.mkdir(dataFolderAddress);
     }
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
@@ -63,8 +65,8 @@ async function saveCookiesFromPage(cookiesJson) {
     const existingCookies = await getCookieListFromFile();
     data = mergeCookies(data, existingCookies);
     data = JSON.stringify(data, null, 2);
-    if (!(await checkDirectory("./data"))) {
-      await fs.mkdir("./data");
+    if (!(await checkDirectory(dataFolderAddress))) {
+      await fs.mkdir(dataFolderAddress);
     }
     await fs.writeFile(cookieFileAddress, data);
   } catch (err) {
@@ -105,7 +107,7 @@ function mergeCookies(newList, existingCookies) {
   for (let newCookie of newList) {
     const index = existingCookies.findIndex(
       (cookie) =>
-        newCookie.key === cookie.key && newCookie.domain === cookie.domain,
+        newCookie.key === cookie.key && newCookie.domain === cookie.domain
     );
     if (index !== -1) {
       existingCookies[index] = newCookie;
@@ -117,7 +119,7 @@ function mergeCookies(newList, existingCookies) {
 }
 
 async function getCookieListFromFile() {
-  if (await checkDirectory("./data")) {
+  if (await checkDirectory(dataFolderAddress)) {
     const data = await fs.readFile(cookieFileAddress, "utf-8");
     if (data) return JSON.parse(data);
   }

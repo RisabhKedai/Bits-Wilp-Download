@@ -1,5 +1,7 @@
 const cheerio = require("cheerio");
 const fs = require("fs/promises");
+const os = require("os");
+
 const {
   createDirectory,
   saveContent,
@@ -15,15 +17,20 @@ const {
   FILE_TYPE_PAGE,
 } = require("../constants/ParsingConstants");
 const { parseContentDisposition } = require("../utils/CommonUtils");
+const {
+  STORE_FOLDER,
+  CONTENT_FOLDER,
+  DATA_FOLDER,
+} = require("../constants/Path");
 
-const coursesContentAddress = "./content";
+const coursesContentAddress = `${os.homedir()}/${STORE_FOLDER}/${CONTENT_FOLDER}`;
 
 async function downloadContent(courseId, idx) {
   const courseString = await fs.readFile(`./data/${courseId}.json`, "utf-8");
   let courseDetails = JSON.parse(courseString);
   await createDirectories(courseDetails, idx);
   fs.writeFile(
-    `./data/${courseId}.json`,
+    `./${DATA_FOLDER}/${courseId}.json`,
     JSON.stringify(courseDetails, null, 2)
   );
 }
@@ -41,7 +48,7 @@ async function createDirectories(courseDetails, cidx) {
           content.type
         );
         if (contentName && contentBinary) {
-          contentName = `C${cidx}S${sidx}D${didx}-${contentName}`
+          contentName = `C${cidx}S${sidx}D${didx}-${contentName}`;
           await saveContent(sectionPath, contentName, contentBinary);
         }
       } else if (content.type === FILE_TYPE_FOLDER) {
@@ -54,7 +61,7 @@ async function createDirectories(courseDetails, cidx) {
           content.type
         );
         if (contentName && contentBinary) {
-          contentName = `C${cidx}S${sidx}D${didx}-${contentName}`
+          contentName = `C${cidx}S${sidx}D${didx}-${contentName}`;
           await saveContent(sectionPath, contentName, contentBinary);
         }
       } else if (content.type === FILE_TYPE_PAGE) {
@@ -132,7 +139,7 @@ function getFileNameFromURL(headers) {
 }
 
 async function clearCourseContent() {
-  await cleanAndDeleteDir("./content");
+  await cleanAndDeleteDir(coursesContentAddress);
 }
 
 module.exports = { downloadContent, clearCourseContent };
