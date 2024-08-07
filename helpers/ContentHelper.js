@@ -85,6 +85,7 @@ async function createDirectories(courseDetails, cidx) {
         content.pageDetails = (await getPageDetails(content.url)) || [];
       }
     }
+    console.log("Completed Section ", section.sectionHeader);
   }
 }
 
@@ -128,7 +129,6 @@ async function getFileList(folderUrl) {
       console.log("Unable to fetch Folder details", url);
       return [];
     }
-    await fs.writeFile("folderPage.html", resp.data);
     const folderContentList = await parseFolderContent(resp.data);
     return folderContentList || [];
   } catch (e) {

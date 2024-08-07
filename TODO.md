@@ -53,3 +53,4 @@ DONE :
 1. Parse YouTube link and title and store in content
 1. Naming of the files and folders so that they are in sequential order.[28]
 1. Improve the functionality of downloading and saving folders by entering the folder page [22]
+1. Add proper logs for download complete and begin [29]
