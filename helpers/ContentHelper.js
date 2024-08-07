@@ -1,6 +1,7 @@
 const cheerio = require("cheerio");
 const fs = require("fs/promises");
 const os = require("os");
+const path = require("path");
 
 const {
   createDirectory,
@@ -23,7 +24,11 @@ const {
   DATA_FOLDER,
 } = require("../constants/Path");
 
-const coursesContentAddress = `${os.homedir()}/${STORE_FOLDER}/${CONTENT_FOLDER}`;
+const coursesContentAddress = path.resolve(
+  os.homedir(),
+  STORE_FOLDER,
+  CONTENT_FOLDER
+);
 
 async function downloadContent(courseId, idx) {
   console.log(DATA_FOLDER);
@@ -40,7 +45,7 @@ async function downloadContent(courseId, idx) {
 }
 
 async function createDirectories(courseDetails, cidx) {
-  const coursePath = `./${coursesContentAddress}/C${cidx}-${courseDetails.name}`;
+  const coursePath = `${coursesContentAddress}/C${cidx}-${courseDetails.name}`;
   await createDirectory(coursePath);
   courseDetails.sectionList.forEach(async (section, sidx) => {
     const sectionPath = `${coursePath}/C${cidx}S${sidx}-${section.sectionHeader}`;
