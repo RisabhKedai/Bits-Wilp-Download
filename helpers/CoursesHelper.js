@@ -9,9 +9,10 @@ const {
 } = require("../utils/CommonUtils");
 const { downloadContent } = require("./ContentHelper");
 const { checkDirectory, cleanAndDeleteDir } = require("../utils/FSHandler");
+const { DATA_FOLDER } = require("../constants/Path");
 
 const coursesUrl = require("../constants/Urls").BITS_COURSES_URL;
-const courseFileAddress = "./data/courses.json";
+const courseFileAddress = `${DATA_FOLDER}/courses.json`;
 
 async function downloadSingleCourse() {
   let courseList = await fetchCoursesList();
@@ -126,7 +127,7 @@ async function downloadCourse(course) {
 }
 
 async function clearCourseData() {
-  await cleanAndDeleteDir("./data");
+  await cleanAndDeleteDir(DATA_FOLDER);
 }
 
 async function parseCoursePage(coursePage) {

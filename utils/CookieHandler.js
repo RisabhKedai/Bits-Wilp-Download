@@ -3,8 +3,8 @@ const { checkDirectory } = require("./FSHandler");
 const { DATA_FOLDER } = require("../constants/Path");
 const fs = require("fs").promises;
 
-const cookieFileAddress = `./${DATA_FOLDER}/cookies.json`;
-const dataFolderAddress = `./${DATA_FOLDER}`;
+const cookieFileAddress = `${DATA_FOLDER}/cookies.json`;
+const dataFolderAddress = `${DATA_FOLDER}`;
 const cookieJarSpec = {
   version: "tough-cookie@4.1.4",
   storeType: "MemoryCookieStore",

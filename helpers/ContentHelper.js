@@ -26,11 +26,15 @@ const {
 const coursesContentAddress = `${os.homedir()}/${STORE_FOLDER}/${CONTENT_FOLDER}`;
 
 async function downloadContent(courseId, idx) {
-  const courseString = await fs.readFile(`./data/${courseId}.json`, "utf-8");
+  console.log(DATA_FOLDER);
+  const courseString = await fs.readFile(
+    `${DATA_FOLDER}/${courseId}.json`,
+    "utf-8"
+  );
   let courseDetails = JSON.parse(courseString);
   await createDirectories(courseDetails, idx);
   fs.writeFile(
-    `./${DATA_FOLDER}/${courseId}.json`,
+    `${DATA_FOLDER}/${courseId}.json`,
     JSON.stringify(courseDetails, null, 2)
   );
 }

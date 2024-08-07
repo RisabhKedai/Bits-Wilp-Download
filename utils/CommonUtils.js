@@ -1,6 +1,7 @@
 const fs = require("fs");
 const unzipper = require("unzipper");
 const rs = require("readline-sync");
+const { DATA_FOLDER } = require("../constants/Path");
 
 function isNumber(value) {
   return !isNaN(value) && typeof value === "number";
@@ -12,7 +13,7 @@ function removeWhiteSpace(string) {
 }
 
 function getAddressToStoreCourseData(courseId) {
-  return `./data/${courseId}.json`;
+  return `${DATA_FOLDER}/${courseId}.json`;
 }
 
 function parseContentDisposition(header) {
@@ -82,7 +83,7 @@ function questionIntInRange(prompt, min, max) {
       return parseInt(input, 10);
     } else {
       console.log(
-        `Invalid input. Please enter an integer between ${min} and ${max}.`,
+        `Invalid input. Please enter an integer between ${min} and ${max}.`
       );
     }
   }
