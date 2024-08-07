@@ -31,26 +31,34 @@ const coursesContentAddress = path.resolve(
 );
 
 async function downloadContent(courseId, idx) {
-  console.log(DATA_FOLDER);
   const courseString = await fs.readFile(
     `${DATA_FOLDER}/${courseId}.json`,
     "utf-8"
   );
   let courseDetails = JSON.parse(courseString);
   await createDirectories(courseDetails, idx);
-  fs.writeFile(
+  // save updated content
+  await fs.writeFile(
     `${DATA_FOLDER}/${courseId}.json`,
     JSON.stringify(courseDetails, null, 2)
   );
 }
 
 async function createDirectories(courseDetails, cidx) {
-  const coursePath = `${coursesContentAddress}/C${cidx}-${courseDetails.name}`;
+  const coursePath = path.join(
+    coursesContentAddress,
+    `C${cidx}-${courseDetails.name}`
+  );
   await createDirectory(coursePath);
-  courseDetails.sectionList.forEach(async (section, sidx) => {
-    const sectionPath = `${coursePath}/C${cidx}S${sidx}-${section.sectionHeader}`;
+
+  for (const [sidx, section] of courseDetails.sectionList.entries()) {
+    const sectionPath = path.join(
+      coursePath,
+      `C${cidx}S${sidx}-${section.sectionHeader}`
+    );
     await createDirectory(sectionPath);
-    section.contentList.forEach(async (content, didx) => {
+
+    for (const [didx, content] of section.contentList.entries()) {
       if (content.type === FILE_TYPE_FILE) {
         let { contentName, contentBinary } = await getContentBinary(
           content.url,
@@ -61,23 +69,23 @@ async function createDirectories(courseDetails, cidx) {
           await saveContent(sectionPath, contentName, contentBinary);
         }
       } else if (content.type === FILE_TYPE_FOLDER) {
-        const downloadURL = content.url.replace(
-          VIEW_ITEM_CODEFILE,
-          DOWNLOAD_FOLDER_CODEFILE
-        );
-        let { contentName, contentBinary } = await getContentBinary(
-          downloadURL,
-          content.type
-        );
-        if (contentName && contentBinary) {
-          contentName = `C${cidx}S${sidx}D${didx}-${contentName}`;
-          await saveContent(sectionPath, contentName, contentBinary);
+        const fileList = await getFileList(content.url);
+        for (const file of fileList) {
+          let contentName = file.name;
+          let { contentBinary } = await getContentBinary(
+            file.link,
+            FILE_TYPE_FILE
+          );
+          if (contentName && contentBinary) {
+            contentName = `C${cidx}S${sidx}D${didx}-${contentName}`;
+            await saveContent(sectionPath, contentName, contentBinary);
+          }
         }
       } else if (content.type === FILE_TYPE_PAGE) {
         content.pageDetails = (await getPageDetails(content.url)) || [];
       }
-    });
-  });
+    }
+  }
 }
 
 async function getContentBinary(url, type) {
@@ -104,7 +112,25 @@ async function getPageDetails(pageUrl) {
       return [];
     }
     const pageContentList = await parsePageContent(resp.data);
-    return pageContentList;
+    return pageContentList || [];
+  } catch (e) {
+    // console.log(e);
+    // console.log(e.stackTrace);
+  }
+}
+
+async function getFileList(folderUrl) {
+  try {
+    const resp = await getResponse(folderUrl);
+    if (!resp || resp.status !== 200) {
+      // throw new Error("Unable to fetch Page details")
+      // console.log(resp.status)
+      console.log("Unable to fetch Folder details", url);
+      return [];
+    }
+    await fs.writeFile("folderPage.html", resp.data);
+    const folderContentList = await parseFolderContent(resp.data);
+    return folderContentList || [];
   } catch (e) {
     // console.log(e);
     // console.log(e.stackTrace);
@@ -122,6 +148,21 @@ async function parsePageContent(contentStr) {
     }
   });
   return links;
+}
+
+async function parseFolderContent(contentStr) {
+  const fileList = [];
+  const $ = cheerio.load(contentStr);
+
+  $(".fp-filename-icon > a").each((_, element) => {
+    const fileData = $(element);
+    const href = fileData.attr("href");
+    const name = fileData.find("span.fp-filename").text();
+    if (href) {
+      fileList.push({ link: href, name: name || "" });
+    }
+  });
+  return fileList;
 }
 
 // TODO : figure out a way to find the content type.

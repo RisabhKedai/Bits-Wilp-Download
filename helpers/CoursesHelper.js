@@ -32,6 +32,10 @@ async function downloadSingleCourse() {
   //   console.log("course", courseNumber);
   await downloadCourse(courseList[courseNumber - 1]);
   await downloadContent(courseList[courseNumber - 1].id, courseNumber);
+  console.log(
+    "Finished downloading course --",
+    courseList[courseNumber - 1].name
+  );
 }
 
 async function downloadAllCourses() {

@@ -12,7 +12,6 @@ IMPROVEMENT:
 12. Implement Retry mechanism for login
 19. Index comparison Before downloading
 21. Logout and then login for the cookie.
-22. Improve the functionality of downloading and saving folders by entering the folder page
 26. Use service.php to get accurate data.
 27. Add proper error handling. When should I throw an error vs when should i muffle an error
 ```
@@ -33,6 +32,10 @@ FEATURE:
 
 INPROGRESS :
 
+```
+
+```
+
 DONE :
 
 1. Sync cookies accross CookieJar and Puppeteer
@@ -49,3 +52,4 @@ DONE :
 1. Implement repeated asking for course number if input is invalid during dowload.
 1. Parse YouTube link and title and store in content
 1. Naming of the files and folders so that they are in sequential order.[28]
+1. Improve the functionality of downloading and saving folders by entering the folder page [22]
