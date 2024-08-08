@@ -27,13 +27,12 @@ FEATURE:
    Provide the user with options with where to save the downloaded files (including drive)
    Use `ini` format for credential storage.
 6. Add option to save stuff to google drive directly
-7. Merge PPTs so that they can be printed in a more convenient way.
 ```
 
 INPROGRESS :
 
 ```
-
+7. Merge PPTs so that they can be printed in a more convenient way.
 ```
 
 DONE :

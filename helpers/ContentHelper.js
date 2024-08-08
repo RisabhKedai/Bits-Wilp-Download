@@ -81,6 +81,7 @@ async function createDirectories(courseDetails, cidx) {
             await saveContent(sectionPath, contentName, contentBinary);
           }
         }
+        content.fileList = fileList;
       } else if (content.type === FILE_TYPE_PAGE) {
         content.pageDetails = (await getPageDetails(content.url)) || [];
       }
