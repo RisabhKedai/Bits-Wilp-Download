@@ -1,4 +1,4 @@
-const util = require("util");
+const path = require("path");
 const fs = require("fs/promises");
 const {
   parseContentDisposition,
@@ -56,9 +56,45 @@ async function cleanAndDeleteDir(dir) {
   }
 }
 
+async function listFolders(directoryPath) {
+  try {
+    const items = await fs.readdir(directoryPath, { withFileTypes: true });
+
+    const folders = items
+      .filter((item) => item.isDirectory())
+      .map((folder) => folder.name);
+    return folders;
+  } catch (err) {
+    console.error("Error reading directory:", err);
+  }
+}
+async function findFilesWithExtensions(folderPath, extensions) {
+  let filesWithExtensions = [];
+
+  async function findFiles(folder) {
+    const files = await fs.readdir(folder);
+    for (const file of files) {
+      const fullPath = path.join(folder, file);
+      const stat = await fs.stat(fullPath);
+      if (stat.isDirectory()) {
+        await findFiles(fullPath); // Recursively search in subfolders
+      } else {
+        if (extensions.includes(path.extname(file).toLowerCase())) {
+          filesWithExtensions.push(fullPath);
+        }
+      }
+    }
+  }
+
+  await findFiles(folderPath);
+  return filesWithExtensions;
+}
+
 module.exports = {
   createDirectory,
   saveContent,
   checkDirectory,
   cleanAndDeleteDir,
+  listFolders,
+  findFilesWithExtensions,
 };

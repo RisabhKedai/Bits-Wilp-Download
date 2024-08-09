@@ -69,6 +69,15 @@ yargs.command({
         }
       },
     });
+
+    // Merge all the PPTs in a specified course
+    yargs.command({
+      command: "merge-ppt",
+      describe: "Select a course from list to merge PPT for",
+      handler: (argv) => {
+        contentHelper.mergePPT();
+      },
+    });
   },
   handler: (argv) => {
     if (argv._.length === 1) {

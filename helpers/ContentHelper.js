@@ -2,22 +2,27 @@ const cheerio = require("cheerio");
 const fs = require("fs/promises");
 const os = require("os");
 const path = require("path");
+const PPTXGenJS = require("pptxgenjs");
+// const PDFMerger = require("pdf-merger-js"); // You may need to install this package for merging PDFs
 
 const {
   createDirectory,
   saveContent,
   cleanAndDeleteDir,
+  listFolders,
+  findFilesWithExtensions,
 } = require("../utils/FSHandler");
 const { getResponse } = require("../utils/RequestHandler");
 const {
   FILE_TYPE_FILE,
   FILE_TYPE_FOLDER,
-  VIEW_ITEM_CODEFILE,
-  DOWNLOAD_FOLDER_CODEFILE,
   HEADER_CONTENT_DISPOSITION,
   FILE_TYPE_PAGE,
 } = require("../constants/ParsingConstants");
-const { parseContentDisposition } = require("../utils/CommonUtils");
+const {
+  parseContentDisposition,
+  questionIntInRange,
+} = require("../utils/CommonUtils");
 const {
   STORE_FOLDER,
   CONTENT_FOLDER,
@@ -29,6 +34,84 @@ const coursesContentAddress = path.resolve(
   STORE_FOLDER,
   CONTENT_FOLDER
 );
+
+async function mergeContent() {
+  const folderList = await listFolders(coursesContentAddress);
+  if (!folderList.length) {
+    console.log("No courses downloaded.");
+  }
+  console.log("Choose a course from the following:");
+  for ([idx, folderName] of Object.entries(folderList)) {
+    console.log(`${parseInt(idx) + 1} - ${folderName}`);
+  }
+  let courseNumber = questionIntInRange(
+    "Enter the number against the course to download: ",
+    1,
+    folderList.length
+  );
+  console.log("Merging PPT for course -- ", folderList[courseNumber - 1]);
+  await mergeAndSaveContent(folderList[courseNumber - 1]);
+}
+
+async function mergeAndSaveContent(folderName) {
+  const folderPath = path.join(coursesContentAddress, folderName);
+  const mergeFolderPath = path.join(folderPath, "merge");
+
+  createDirectory(mergeFolderPath);
+
+  const pptFiles = await findFilesWithExtensions(folderPath, [".pptx", ".ppt"]);
+  const pdfFiles = await findFilesWithExtensions(folderPath, [".pdf"]);
+
+  if (pptFiles.length > 0) {
+    await mergePPTFiles(pptFiles, path.join(mergeFolderPath, "merged.pptx"));
+  }
+
+  if (pdfFiles.length > 0) {
+    await mergePDFFiles(pdfFiles, path.join(mergeFolderPath, "merged.pdf"));
+  }
+}
+
+async function mergePPTFiles(pptFiles, outputPath) {
+  console.log(pptFiles);
+
+  let pptx = new PPTXGenJS();
+  pptx.load(pptFiles[0]);
+  for (let i = 0; i < pptx.slides.length; i++) {
+    const slide = pptx.slides[i];
+
+    // Convert slide to HTML (or SVG)
+    const slideContent = slide.getHTML();
+    console.log(slideContent);
+    // Load slide content into Puppeteer and take a screenshot
+    // await page.setContent(slideContent);
+    // await page.screenshot({ path: `${outputDir}/slide-${i + 1}.png` });
+  }
+
+  // for (const file of pptFiles) {
+  //   // Load slides from the file (this is a simplified example, actual implementation may vary)
+  //   // let slides = await loadSlidesFromFile(file);
+
+  //   slides.forEach((slide) => {
+  //     pptx.addSlide(slide);
+  //   });
+  // }
+
+  // pptx
+  //   .writeFile("MergedPresentation.pptx")
+  //   .then(() => console.log("Presentation merged and saved"))
+  //   .catch((err) => console.error("Error merging presentation:", err));
+}
+
+async function mergePDFFiles(pdfFiles, outputPath) {
+  console.log(pdfFiles);
+  // const pdfMerger = new PDFMerger();
+
+  // for (const file of pdfFiles) {
+  //   pdfMerger.add(file);
+  // }
+
+  // await pdfMerger.save(outputPath);
+}
 
 async function downloadContent(courseId, idx) {
   const courseString = await fs.readFile(
@@ -193,4 +276,8 @@ async function clearCourseContent() {
   await cleanAndDeleteDir(coursesContentAddress);
 }
 
-module.exports = { downloadContent, clearCourseContent };
+module.exports = {
+  downloadContent,
+  clearCourseContent,
+  mergePPT: mergeContent,
+};

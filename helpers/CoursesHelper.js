@@ -8,7 +8,7 @@ const {
   questionIntInRange,
 } = require("../utils/CommonUtils");
 const { downloadContent } = require("./ContentHelper");
-const { checkDirectory, cleanAndDeleteDir } = require("../utils/FSHandler");
+const { cleanAndDeleteDir } = require("../utils/FSHandler");
 const { DATA_FOLDER } = require("../constants/Path");
 
 const coursesUrl = require("../constants/Urls").BITS_COURSES_URL;
