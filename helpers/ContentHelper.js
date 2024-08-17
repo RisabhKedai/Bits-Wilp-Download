@@ -36,7 +36,7 @@ const coursesContentAddress = path.resolve(
 
 async function mergeContent() {
   const folderList = await listFolders(coursesContentAddress);
-  if (!folderList.length) {
+  if (!folderList?.length) {
     console.log("No courses downloaded.");
   }
   console.log("Choose a course from the following:");
