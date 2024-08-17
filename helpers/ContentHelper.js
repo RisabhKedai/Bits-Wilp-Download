@@ -63,47 +63,72 @@ async function mergeAndSaveContent(folderName) {
   const pdfFiles = await findFilesWithExtensions(folderPath, [".pdf"]);
 
   if (pptFiles.length > 0) {
-    await mergePPTFiles(pptFiles, path.join(mergeFolderPath, "merged.pptx"));
+    await mergePPTFiles(pptFiles, mergeFolderPath);
   }
 
   if (pdfFiles.length > 0) {
-    await mergePDFFiles(pdfFiles, path.join(mergeFolderPath, "merged.pdf"));
+    await mergePDFFiles(pdfFiles, mergeFolderPath);
   }
 }
 
-async function mergePPTFiles(pptFiles, outputPath) {
-  console.log(pptFiles);
+async function mergePPTFiles(pptFiles, destinationFolder) {
+  try {
+    // Ensure the destination folder exists
+    await fs.mkdir(destinationFolder, { recursive: true });
 
-  let pptx = new PPTXGenJS();
-  pptx.load(pptFiles[0]);
-  for (let i = 0; i < pptx.slides.length; i++) {
-    const slide = pptx.slides[i];
-
-    // Convert slide to HTML (or SVG)
-    const slideContent = slide.getHTML();
-    console.log(slideContent);
-    // Load slide content into Puppeteer and take a screenshot
-    // await page.setContent(slideContent);
-    // await page.screenshot({ path: `${outputDir}/slide-${i + 1}.png` });
+    for (const filePath of pptFiles) {
+      const fileName = path.basename(filePath);
+      const newFilePath = path.join(destinationFolder, fileName);
+      await fs.copyFile(filePath, newFilePath);
+    }
+    console.log("All files moved successfully!");
+  } catch (error) {
+    console.error("Error moving files:", error);
   }
+  // console.log(pptFiles);
 
-  // for (const file of pptFiles) {
-  //   // Load slides from the file (this is a simplified example, actual implementation may vary)
-  //   // let slides = await loadSlidesFromFile(file);
+  // let pptx = new PPTXGenJS();
+  // pptx.load(pptFiles[0]);
+  // for (let i = 0; i < pptx.slides.length; i++) {
+  //   const slide = pptx.slides[i];
 
-  //   slides.forEach((slide) => {
-  //     pptx.addSlide(slide);
-  //   });
+  //   // Convert slide to HTML (or SVG)
+  //   const slideContent = slide.getHTML();
+  //   console.log(slideContent);
+  //   // Load slide content into Puppeteer and take a screenshot
+  //   // await page.setContent(slideContent);
+  //   // await page.screenshot({ path: `${outputDir}/slide-${i + 1}.png` });
   // }
 
-  // pptx
-  //   .writeFile("MergedPresentation.pptx")
-  //   .then(() => console.log("Presentation merged and saved"))
-  //   .catch((err) => console.error("Error merging presentation:", err));
+  // // for (const file of pptFiles) {
+  // //   // Load slides from the file (this is a simplified example, actual implementation may vary)
+  // //   // let slides = await loadSlidesFromFile(file);
+
+  // //   slides.forEach((slide) => {
+  // //     pptx.addSlide(slide);
+  // //   });
+  // // }
+
+  // // pptx
+  // //   .writeFile("MergedPresentation.pptx")
+  // //   .then(() => console.log("Presentation merged and saved"))
+  // //   .catch((err) => console.error("Error merging presentation:", err));
 }
 
-async function mergePDFFiles(pdfFiles, outputPath) {
-  console.log(pdfFiles);
+async function mergePDFFiles(pdfFiles, destinationFolder) {
+  try {
+    // Ensure the destination folder exists
+    await fs.mkdir(destinationFolder, { recursive: true });
+
+    for (const filePath of pdfFiles) {
+      const fileName = path.basename(filePath);
+      const newFilePath = path.join(destinationFolder, fileName);
+      await fs.copyFile(filePath, newFilePath);
+    }
+    console.log("All files moved successfully!");
+  } catch (error) {
+    console.error("Error moving files:", error);
+  }
   // const pdfMerger = new PDFMerger();
 
   // for (const file of pdfFiles) {
@@ -279,5 +304,5 @@ async function clearCourseContent() {
 module.exports = {
   downloadContent,
   clearCourseContent,
-  mergePPT: mergeContent,
+  mergeContent,
 };
