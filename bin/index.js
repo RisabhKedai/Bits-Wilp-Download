@@ -73,7 +73,8 @@ yargs.command({
     // Merge all the PPTs in a specified course
     yargs.command({
       command: "merge-content",
-      describe: "Select a course from list to merge PPT for",
+      describe:
+        "Select a course from list to merge PPT and PDF content into a single folder",
       handler: (argv) => {
         contentHelper.mergeContent();
       },
