@@ -61,7 +61,8 @@ async function cleanAndDeleteDir(dir) {
 
 async function listFolders(directoryPath) {
   try {
-    const items = await fs.readdir(directoryPath, { withFileTypes: true });
+    const items =
+      (await fs.readdir(directoryPath, { withFileTypes: true })) || [];
 
     const folders = items
       .filter((item) => item.isDirectory())
