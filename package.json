@@ -13,7 +13,6 @@
     "axios": "1.7.2",
     "axios-cookiejar-support": "^5.0.2",
     "cheerio": "1.0.0-rc.12",
-    "pptxgenjs": "^3.12.0",
     "puppeteer": "^22.11.2",
     "readline-sync": "^1.4.10",
     "tough-cookie": "4.1.4",
