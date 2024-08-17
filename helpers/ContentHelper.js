@@ -38,6 +38,7 @@ async function mergeContent() {
   const folderList = await listFolders(coursesContentAddress);
   if (!folderList?.length) {
     console.log("No courses downloaded.");
+    return;
   }
   console.log("Choose a course from the following:");
   for ([idx, folderName] of Object.entries(folderList)) {
