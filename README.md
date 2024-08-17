@@ -14,7 +14,7 @@ https://nodejs.org/en/download/package-manager
 ### 1. Run the following command to download and install the CLI tool To start the project :
 
 ```
-npm install -g .
+npm i @risabhkedai/bits-wilp-downloader -g
 ```
 
 ### 2. Check if the CLI tool is correctly installed by running the command :
