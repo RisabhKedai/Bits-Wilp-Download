@@ -89,6 +89,17 @@ function questionIntInRange(prompt, min, max) {
   }
 }
 
+function sanitizePath(inputPath) {
+  // Replace colons `:` with hyphens `-` or underscores `_` as they are problematic in some OSs
+  let sanitizedPath = inputPath.replace(/:/g, '-');
+  // Remove any characters that are generally invalid across OSs, such as:
+  // < > : " / \ | ? * (and null characters)
+  sanitizedPath = sanitizedPath.replace(/[<>:"/\\|?*\0]/g, '');
+  // Normalize the path to ensure consistent formatting
+  sanitizedPath = path.normalize(sanitizedPath);
+  return sanitizedPath;
+}
+
 module.exports = {
   isNumber,
   removeWhiteSpace,
@@ -97,4 +108,5 @@ module.exports = {
   getFileExtension,
   unzipBufferToFolder,
   questionIntInRange,
+  sanitizePath
 };

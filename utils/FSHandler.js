@@ -4,11 +4,12 @@ const {
   parseContentDisposition,
   getFileExtension,
   unzipBufferToFolder,
+  sanitizePath,
 } = require("./CommonUtils");
 
 async function createDirectory(path) {
   try {
-    await fs.mkdir(path, { recursive: true });
+    await fs.mkdir(sanitizePath(path), { recursive: true });
   } catch (e) {
     if (e.code !== "EEXIST") {
       // throw e
@@ -41,6 +42,7 @@ async function saveContent(folderPath, contentName, contentBiary) {
     default:
       const contentNamePath = path.join(folderPath, contentName);
       await createDirectory(folderPath);
+      contentNamePath = sanitizePath(contentNamePath);
       await fs.writeFile(contentNamePath, Buffer.from(contentBiary), "binary");
       break;
   }
