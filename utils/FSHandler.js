@@ -12,7 +12,7 @@ async function createDirectory(path) {
   } catch (e) {
     if (e.code !== "EEXIST") {
       // throw e
-      console.log("Error creating directory");
+      console.log("Error creating directory", e.code);
     }
   }
 }
@@ -40,6 +40,7 @@ async function saveContent(folderPath, contentName, contentBiary) {
       break;
     default:
       const contentNamePath = `${folderPath}/${contentName}`;
+      await createDirectory(folderPath);
       await fs.writeFile(contentNamePath, Buffer.from(contentBiary), "binary");
       break;
   }
