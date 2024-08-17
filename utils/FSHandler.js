@@ -39,7 +39,7 @@ async function saveContent(folderPath, contentName, contentBiary) {
       unzipBufferToFolder(Buffer.from(contentBiary), folderPath);
       break;
     default:
-      const contentNamePath = `${folderPath}/${contentName}`;
+      const contentNamePath = path.join(folderPath, contentName);
       await createDirectory(folderPath);
       await fs.writeFile(contentNamePath, Buffer.from(contentBiary), "binary");
       break;
