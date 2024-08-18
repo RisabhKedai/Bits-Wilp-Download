@@ -57,6 +57,31 @@ The output should show commands available.
 
 - **Description**: Cleans up all data created during operations, including course data and content.
 
+## Output :
+
+### Course content :
+
+Course Content is getting saved in the homedirectory of your system. To check for the address to your homedirectory use :
+
+### On Windows:
+
+1. **Using Command Prompt:**
+   ```cmd
+   echo %HOMEDRIVE%%HOMEPATH%
+   ```
+2. **Using PowerShell:**
+
+   ```echo $HOME
+
+   ```
+
+### **On Mac:**
+
+1. **Using Terminal:**
+   ```echo $HOME
+
+   ```
+
 ## Troubleshooting Guidelines :
 
 ### 1. Not able to find courses / incorrect login :
