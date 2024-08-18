@@ -56,3 +56,13 @@ The output should show commands available.
 ### `clean`
 
 - **Description**: Cleans up all data created during operations, including course data and content.
+
+## Troubleshooting Guidelines :
+
+### 1. Not able to find courses / incorrect login :
+
+    This might be due to login cookies issue. Try cleaning the cached data with :
+    ```
+    wilp-dwnlds clean
+    ```
+    Then try login again.
