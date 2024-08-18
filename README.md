@@ -71,15 +71,16 @@ Course Content is getting saved in the homedirectory of your system. To check fo
    ```
 2. **Using PowerShell:**
 
-   ```echo $HOME
-
+   ```cmd
+   echo $HOME
    ```
 
 ### **On Mac:**
 
 1. **Using Terminal:**
-   ```echo $HOME
 
+   ```cmd
+   echo $HOME
    ```
 
 ## Troubleshooting Guidelines :
