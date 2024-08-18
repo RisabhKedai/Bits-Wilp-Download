@@ -1,6 +1,10 @@
 TODO :
 BUG:
 
+```
+30. index.js appearing in wilp-dwnld help command
+```
+
 IMPROVEMENT:
 
 ```
