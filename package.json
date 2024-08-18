@@ -1,6 +1,6 @@
 {
   "name": "@risabhkedai/bits-wilp-downloader",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Script for downloading bits wilp course material",
   "bin": {
     "wilp-dwnld": "./bin/index.js"
