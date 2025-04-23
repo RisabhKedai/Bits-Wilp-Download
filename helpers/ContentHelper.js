@@ -2,7 +2,6 @@ const cheerio = require("cheerio");
 const fs = require("fs/promises");
 const os = require("os");
 const path = require("path");
-// const PDFMerger = require("pdf-merger-js"); // You may need to install this package for merging PDFs
 
 const {
   createDirectory,
